@@ -6,13 +6,13 @@
       <div :class="{'fixed-header':fixedHeader}">
         <navbar />
       </div>
+      <tags-view />    <!-- 此处增加tag-->
       <app-main />
     </div>
   </div>
 </template>
-
 <script>
-import { Navbar, Sidebar, AppMain } from './components'
+import { Navbar, Sidebar, AppMain, TagsView } from './components'
 import ResizeMixin from './mixin/ResizeHandler'
 
 export default {
@@ -20,10 +20,16 @@ export default {
   components: {
     Navbar,
     Sidebar,
-    AppMain
+    AppMain,
+    TagsView
   },
   mixins: [ResizeMixin],
   computed: {
+    needTagsView() {
+      console.log(this.$store.state.settings.tagsView)
+      return this.$store.state.settings.tagsView
+      // return true
+    },
     sidebar() {
       return this.$store.state.app.sidebar
     },
@@ -42,12 +48,7 @@ export default {
       }
     }
   },
-  methods: {
-    handleClickOutside() {
-      this.$store.dispatch('app/closeSideBar', { withoutAnimation: false })
-    }
   }
-}
 </script>
 
 <style lang="scss" scoped>

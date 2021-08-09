@@ -1,13 +1,18 @@
 <template>
+<!-- 头部 -->
   <div class="navbar">
     <hamburger :is-active="sidebar.opened" class="hamburger-container" @toggleClick="toggleSideBar" />
 
     <breadcrumb class="breadcrumb-container" />
-
-    <div class="right-menu">
+    
+    <div class="right-menu" style="display:flex">
+      <div>
+          <el-button @click="bangzhu()" class="body_button_1" type="primary" plain>帮助</el-button>
+        </div>
       <el-dropdown class="avatar-container" trigger="click">
         <div class="avatar-wrapper">
-          <img :src="avatar+'?imageView2/1/w/80/h/80'" class="user-avatar">
+            <img src="@/assets/5.jpg" class="user-avatar">
+          <!-- <img :src="avatar+'?imageView2/1/w/80/h/80'" class="user-avatar"> -->
           <i class="el-icon-caret-bottom" />
         </div>
         <el-dropdown-menu slot="dropdown" class="user-dropdown">
@@ -16,12 +21,12 @@
               Home
             </el-dropdown-item>
           </router-link>
-          <a target="_blank" href="https://github.com/PanJiaChen/vue-admin-template/">
+          <!-- <a target="_blank" href="https://github.com/PanJiaChen/vue-admin-template/">
             <el-dropdown-item>Github</el-dropdown-item>
           </a>
           <a target="_blank" href="https://panjiachen.github.io/vue-element-admin-site/#/">
             <el-dropdown-item>Docs</el-dropdown-item>
-          </a>
+          </a> -->
           <el-dropdown-item divided @click.native="logout">
             <span style="display:block;">Log Out</span>
           </el-dropdown-item>
@@ -37,6 +42,11 @@ import Breadcrumb from '@/components/Breadcrumb'
 import Hamburger from '@/components/Hamburger'
 
 export default {
+  data(){
+    return{
+      aa:'/bangzhu/shiyong'
+    }
+  },
   components: {
     Breadcrumb,
     Hamburger
@@ -48,6 +58,11 @@ export default {
     ])
   },
   methods: {
+    // 帮助
+    bangzhu(){
+      var ss = this.aa
+      this.$router.push({name:'Shiyong'})
+    },
     toggleSideBar() {
       this.$store.dispatch('app/toggleSideBar')
     },
@@ -112,6 +127,7 @@ export default {
     }
 
     .avatar-container {
+      display: flex;
       margin-right: 30px;
 
       .avatar-wrapper {
@@ -135,5 +151,9 @@ export default {
       }
     }
   }
+}
+.body_button_1{
+  margin-left: -10%;
+  border-radius: 10px;
 }
 </style>

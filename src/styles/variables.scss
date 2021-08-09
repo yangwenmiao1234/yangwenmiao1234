@@ -1,13 +1,18 @@
 // sidebar
-$menuText:#bfcbd9;
-$menuActiveText:#409EFF;
-$subMenuActiveText:#f4f4f5; //https://github.com/ElemeFE/element/issues/12951
+$menuText:#ffffff;
+// 侧边栏选中字体颜色
+$menuActiveText:#ffffff;
+$subMenuActiveText:#ffffff; //https://github.com/ElemeFE/element/issues/12951
 
-$menuBg:#304156;
-$menuHover:#263445;
+// 侧边栏背景色
+$menuBg:#f5b508f5;
+// 侧边栏目录hover背景色
+$menuHover:#daa20af5;
 
-$subMenuBg:#1f2d3d;
-$subMenuHover:#001528;
+// 侧边栏子目录背景色
+$subMenuBg:#ecb621f5;
+// 侧边栏子目录hover背景色
+$subMenuHover:#daa20af5;
 
 $sideBarWidth: 210px;
 

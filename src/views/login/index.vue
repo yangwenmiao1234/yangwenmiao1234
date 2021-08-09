@@ -3,7 +3,7 @@
     <el-form ref="loginForm" :model="loginForm" :rules="loginRules" class="login-form" auto-complete="on" label-position="left">
 
       <div class="title-container">
-        <h3 class="title">Login Form</h3>
+        <h3 class="title">惠工智科</h3>
       </div>
 
       <el-form-item prop="username">
@@ -41,12 +41,12 @@
         </span>
       </el-form-item>
 
-      <el-button :loading="loading" type="primary" style="width:100%;margin-bottom:30px;" @click.native.prevent="handleLogin">Login</el-button>
+      <el-button :loading="loading" type="primary" style="width:100%;margin-bottom:30px;" @click.native.prevent="handleLogin">登录</el-button>
 
-      <div class="tips">
+      <!-- <div class="tips">
         <span style="margin-right:20px;">username: admin</span>
         <span> password: any</span>
-      </div>
+      </div> -->
 
     </el-form>
   </div>
@@ -54,31 +54,38 @@
 
 <script>
 import { validUsername } from '@/utils/validate'
-
+import { querymenu } from '@/api/menu.js'
+import { data } from 'autoprefixer'
+// import Vuex from 'vuex'
+// Vue.use(Vuex)
 export default {
   name: 'Login',
   data() {
     const validateUsername = (rule, value, callback) => {
-      if (!validUsername(value)) {
-        callback(new Error('Please enter the correct user name'))
-      } else {
-        callback()
-      }
+      // if (!validUsername(value)) {
+      //   callback(new Error('Please enter the correct user name'))
+      // } else {
+      //   callback()
+      // }
     }
     const validatePassword = (rule, value, callback) => {
-      if (value.length < 6) {
-        callback(new Error('The password can not be less than 6 digits'))
+      if (value.length < 2) {
+        callback(new Error('请重新输入密码,密码长度不得少于两位'))
       } else {
         callback()
       }
     }
     return {
+      pid:'0',
+      router:[],
+      route:[],
+      data1:[],
       loginForm: {
-        username: 'admin',
-        password: '111111'
+        username: 'admins',
+        password: 'admins'
       },
       loginRules: {
-        username: [{ required: true, trigger: 'blur', validator: validateUsername }],
+        username: [{ required: true, trigger: 'blur', }],
         password: [{ required: true, trigger: 'blur', validator: validatePassword }]
       },
       loading: false,
@@ -105,22 +112,20 @@ export default {
         this.$refs.password.focus()
       })
     },
-    handleLogin() {
-      this.$refs.loginForm.validate(valid => {
-        if (valid) {
-          this.loading = true
-          this.$store.dispatch('user/login', this.loginForm).then(() => {
-            this.$router.push({ path: this.redirect || '/' })
-            this.loading = false
-          }).catch(() => {
-            this.loading = false
-          })
-        } else {
-          console.log('error submit!!')
-          return false
-        }
-      })
-    }
+handleLogin() {  //这个是登录点击事件
+      this.$refs.loginForm.validate(valid => {
+        if (valid) {
+          this.loading = true
+          this.$store.dispatch('user/login', this.loginForm).then(() => {
+            this.$router.push({ path: this.redirect || '/' })
+            this.loading = false
+          })
+        } else {
+          console.log('error submit!!')
+          return false
+        }
+      })
+    },
   }
 }
 </script>
@@ -129,9 +134,9 @@ export default {
 /* 修复input 背景不协调 和光标变色 */
 /* Detail see https://github.com/PanJiaChen/vue-element-admin/pull/927 */
 
-$bg:#283443;
-$light_gray:#fff;
-$cursor: #fff;
+$bg:#fcedc0b2;
+$light_gray:rgb(255, 187, 0);
+$cursor: rgb(255, 196, 0);
 
 @supports (-webkit-mask: none) and (not (cater-color: $cursor)) {
   .login-container .el-input input {
@@ -164,20 +169,21 @@ $cursor: #fff;
   }
 
   .el-form-item {
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    background: rgba(0, 0, 0, 0.1);
+    border: 1px solid rgb(255, 255, 255);
+    background: rgb(255, 255, 255);
     border-radius: 5px;
-    color: #454545;
+    color: #dba124;
   }
 }
 </style>
 
 <style lang="scss" scoped>
-$bg:#2d3a4b;
+$bg:#ebb215;
 $dark_gray:#889aa4;
 $light_gray:#eee;
 
 .login-container {
+  color: #dba124;
   min-height: 100%;
   width: 100%;
   background-color: $bg;
@@ -194,7 +200,7 @@ $light_gray:#eee;
 
   .tips {
     font-size: 14px;
-    color: #fff;
+    color: rgb(255, 255, 255);
     margin-bottom: 10px;
 
     span {
@@ -206,7 +212,7 @@ $light_gray:#eee;
 
   .svg-container {
     padding: 6px 5px 6px 15px;
-    color: $dark_gray;
+    color: rgb(255, 196, 0);
     vertical-align: middle;
     width: 30px;
     display: inline-block;
@@ -234,4 +240,5 @@ $light_gray:#eee;
     user-select: none;
   }
 }
+
 </style>

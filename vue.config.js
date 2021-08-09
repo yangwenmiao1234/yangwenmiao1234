@@ -6,8 +6,8 @@ function resolve(dir) {
   return path.join(__dirname, dir)
 }
 
-const name = defaultSettings.title || 'vue Admin Template' // page title
-
+const name = defaultSettings.title || '惠工智科' // page title
+                
 // If your port is set to 80,
 // use administrator privileges to execute the command line.
 // For example, Mac: sudo npm run
@@ -15,8 +15,26 @@ const name = defaultSettings.title || 'vue Admin Template' // page title
 // port = 9528 npm run dev OR npm run dev --port = 9528
 const port = process.env.port || process.env.npm_config_port || 9528 // dev port
 
+const px2rem = require('postcss-px2rem')
+
+// 配置基本大小
+const postcss = px2rem({
+  // 基准大小 baseSize，需要和rem.js中相同
+  remUnit: 16
+})
+
 // All configuration item explanations can be find in https://cli.vuejs.org/config/
 module.exports = {
+  lintOnSave: true,
+  css: {
+    loaderOptions: {
+      postcss: {
+        plugins: [
+          postcss
+        ]
+      }
+    }
+  },
   /**
    * You will need to set publicPath if you plan to deploy your site under a sub path,
    * for example GitHub Pages. If you plan to deploy your site to https://foo.github.io/bar/,
@@ -36,7 +54,19 @@ module.exports = {
       warnings: false,
       errors: true
     },
-    before: require('./mock/mock-server.js')
+
+    // 接后端接口代理
+    proxy: {
+      [process.env.VUE_APP_BASE_API]: {
+        target: 'http://192.168.2.55:8089',
+        logLevel:'debug',//运行时将本地发起的地址和对应指向的地址打印输出
+        changeOrigin: true,//允许跨域
+        pathRewrite:{
+          ['^'+process.env.VUE_APP_BASE_API]:''
+        }
+      }
+    },
+    // before: require('./mock/mock-server.js')
   },
   configureWebpack: {
     // provide the app's title in webpack's name field, so that
@@ -44,7 +74,8 @@ module.exports = {
     name: name,
     resolve: {
       alias: {
-        '@': resolve('src')
+        '@': resolve('src'),
+        'jquery': 'jquery'
       }
     }
   },

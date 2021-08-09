@@ -24,18 +24,24 @@ const mutations = {
   },
   SET_AVATAR: (state, avatar) => {
     state.avatar = avatar
-  }
+  },
 }
 
 const actions = {
   // user login
   login({ commit }, userInfo) {
     const { username, password } = userInfo
+    localStorage.setItem("name" , username)
+    localStorage.setItem("pass" , password)
     return new Promise((resolve, reject) => {
-      login({ username: username.trim(), password: password }).then(response => {
-        const { data } = response
-        commit('SET_TOKEN', data.token)
-        setToken(data.token)
+      // 后端接口传值
+      login({ Name: username.trim(), Pass: password }).then(response => {
+        commit('SET_TOKEN', response.data.token)
+        setToken(response.data.token)
+        localStorage.setItem('comid' , response.data.user.CompanyID)
+        localStorage.setItem('ActionTime' , response.data.user.ActionTime)
+        localStorage.setItem('ActionUserID' , response.data.user.ActionUserID)
+        localStorage.setItem('ActionUserName' , response.data.user.ActionUserName)
         resolve()
       }).catch(error => {
         reject(error)
@@ -46,15 +52,22 @@ const actions = {
   // get user info
   getInfo({ commit, state }) {
     return new Promise((resolve, reject) => {
-      getInfo(state.token).then(response => {
+      // let data = {
+      //   roles : state.roles,
+      //   name : state.name,
+      //   avatar :'https://www.baidu.com/?tn=02003390_79_hao_pg'
+      // };
+      // commit ("SET_AVATAR" , "https://www.baidu.com/?tn=02003390_79_hao_pg")
+      // resolve(data);
+      getInfo({
+        name:localStorage.getItem("name"),
+        pass:localStorage.getItem("pass")
+      }).then(response => {
         const { data } = response
-
         if (!data) {
           return reject('Verification failed, please Login again.')
         }
-
         const { name, avatar } = data
-
         commit('SET_NAME', name)
         commit('SET_AVATAR', avatar)
         resolve(data)
@@ -62,12 +75,17 @@ const actions = {
         reject(error)
       })
     })
-  },
+  // })
+},
 
   // user logout
   logout({ commit, state }) {
     return new Promise((resolve, reject) => {
-      logout(state.token).then(() => {
+      logout({
+        name:localStorage.getItem("name"),
+        pass:localStorage.getItem("pass")
+      }).then(() => {
+        localStorage.clear();
         removeToken() // must remove  token  first
         resetRouter()
         commit('RESET_STATE')
@@ -95,3 +113,25 @@ export default {
   actions
 }
 
+
+
+// store.dispatch('SETNAV' , 数据来源)
+// state:{
+// nav : [
+// 
+// ]
+// }
+// mutation:{  1
+//   SETNAV({commit},data){
+//  commit('SETNAV' , data)
+// }
+// 
+// }
+// 管理mutation  1
+// actions{
+// SETNAV({commit},data){
+//  commit('SETNAV' , data)
+// }
+// } 
+
+// 获取 $store.state.nav
