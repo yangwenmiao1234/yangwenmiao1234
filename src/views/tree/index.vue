@@ -57,22 +57,25 @@
         >
           <div class="addform-1">
             <el-form-item label="名称">
-              <el-input v-model="addform.AutoID"></el-input>
+              <el-input v-model="addform.caption"></el-input>
             </el-form-item>
             <el-form-item label="主机方量">
-              <el-input v-model="addform.CompanyID"></el-input>
+              <el-input v-model="addform.machineSquare"></el-input>
+            </el-form-item>
+            <el-form-item label="value值">
+              <el-input v-model="addform.value"></el-input>
             </el-form-item>
             <el-form-item label="设备品牌">
-              <el-input v-model="addform.ID"></el-input>
+              <el-input v-model="addform.machineBrand"></el-input>
             </el-form-item>
             <el-form-item label="设备型号">
-              <el-input v-model="addform.Caption"></el-input>
+              <el-input v-model="addform.machineModel"></el-input>
             </el-form-item>
             <el-form-item label="接口编码">
-              <el-input v-model="addform.MachineSquare"></el-input>
+              <el-input v-model="addform.interfaceID"></el-input>
             </el-form-item>
             <el-form-item label="备注">
-              <el-input v-model="addform.MachineBrand"></el-input>
+              <el-input v-model="addform.remark"></el-input>
             </el-form-item>
           </div>
         </el-form>
@@ -102,12 +105,13 @@ export default {
     return {
       adddialog: false,
       addform: {
-        AutoID: "",
-        CompanyID: "",
-        ID: "",
-        Caption: "",
-        MachineSquare: "",
+        caption: "",
+        machineSquare: "",
         machineBrand: "",
+        machineModel: "",
+        interfaceID: "",
+        remark: "",
+        value:'',
       },
       activeName: "first",
       formInline: {
@@ -125,7 +129,7 @@ export default {
         page: aa.page,
         intPageSize: aa.size,
         id:this.formInline.bianhao,
-         Comid:localStorage.getItem('comid')
+        Comid:localStorage.getItem('comid')
       })
         .then((response) => {
           aa.tableData = response.data;
@@ -167,12 +171,14 @@ export default {
       //   }else{
       addshenchanxianxinxi(
         JSON.stringify({
-          AutoID: this.addform.AutoID,
-          CompanyID: this.addform.CompanyID,
-          ID: this.addform.ID,
-          Caption: this.addform.Caption,
-          MachineSquare: this.addform.MachineSquare,
-          MachineBrand: this.addform.MachineBrand,
+          MachineBrand: this.addform.machineBrand,
+          CompanyID: localStorage.getItem('comid'),
+          ID: this.addform.value,
+          Caption: this.addform.caption,
+          MachineSquare: this.addform.machineSquare,
+          InterfaceID: this.addform.interfaceID,
+          MachineModel: this.addform.machineModel,
+          Remark: this.addform.remark,
         })
       )
         .then((response) => {

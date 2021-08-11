@@ -8,6 +8,14 @@ export function querylisttree(data) {
       params: data
     })
   }
+  // 获取二级节点查询数据
+  export function querylisttree2(data) {
+    return request({
+      url: '/api/Material/GetTypeMaterialItemTree',
+      method: 'get',
+      params: data
+    })
+  }
   // 料仓信添加一级树形结构接口
   export function addtree1(data) {
     return request({
@@ -68,3 +76,22 @@ export function querylisttree(data) {
       params: data
     })
   }
+  
+  // 配置信息查询树形结构接口
+export function querylistpzxx(data) {
+  return request({
+    url: '/api/ConfigurationInfor/GetProductLineConfigurationTree',
+    method: 'get',
+    params: data
+  })
+}
+
+// 配置信息查询MES/PCS料仓名列表接口
+export function querylistmes(data) {
+  return request({
+    url: '/api/ConfigurationInfor/GetStoreList',
+    method: 'get',
+    params: data
+  })
+}
+  

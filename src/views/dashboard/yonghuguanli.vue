@@ -460,14 +460,6 @@ export default {
     };
   },
   methods: {
-router(){
-  querymenu({
-              pid : localStorage.getItem('ss')
-            }).then(response=>{
-              this.data1 = response.data.children
-             localStorage.setItem('data1' , this.data1)
-            })
-},
     quanbu(){
       
     },

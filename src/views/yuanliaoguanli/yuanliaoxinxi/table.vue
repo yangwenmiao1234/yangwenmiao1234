@@ -7,13 +7,25 @@
     <div class="body_dialog">
       <el-form :label-position="editorlabel" label-width="80px" :model="editorform">
   <el-form-item label="名称">
-    <el-input v-model="editorform.CompanyID"></el-input>
-  </el-form-item>
-  <el-form-item label="ID">
-    <el-input v-model="editorform.ID"></el-input>
+    <el-input v-model="editorform.Caption"></el-input>
   </el-form-item>
   <el-form-item label="类型">
-    <el-input v-model="editorform.TypeMaterialID"></el-input>
+  <el-select style="width:110px" @change="queryselecttree()" v-model="TypeMaterialID" filterable placeholder="请选择">
+    <el-option
+      v-for="item in options1"
+      :key="item.value"
+      :label="item.title"
+      :value="item.value">
+    </el-option>
+  </el-select>
+  <el-select style="width:110px;margin-left:3%" v-model="TypeMaterialItemID" filterable placeholder="请选择">
+    <el-option
+      v-for="item in options2"
+      :key="item.value"
+      :label="item.title"
+      :value="item.value">
+    </el-option>
+  </el-select>
   </el-form-item>
     <el-form-item label="密度">
     <el-input v-model="editorform.Density"></el-input>
@@ -56,9 +68,7 @@
             {{ scope.$index + 1 }}
           </template>
         </el-table-column>
-        <el-table-column prop="CompanyID" label="名称" width="">
-        </el-table-column>
-        <el-table-column prop="ID" label="ID" width="">
+        <el-table-column prop="Caption" label="名称" width="">
         </el-table-column>
         <el-table-column prop="TypeMaterialID" label="类型" width="">
         </el-table-column>
@@ -76,7 +86,7 @@
         <el-table-column fixed="right" label="操作" width="100px">
           <template slot-scope="scope">
             <el-button style="color: rgb(0 0 0 / 67%)" type="text" size="small"
-             @click="editorClick(scope.row),editordialog=true"
+             @click="querylisttree(),editorClick(scope.row),editordialog=true"
               >编辑</el-button
             >
             <el-button style="color: rgb(0 0 0 / 67%)" type="text" size="small"
@@ -104,6 +114,7 @@
 
 <script>
 import { querylistylxx , addylxx , deletesylxx , modifyylxx } from '@/api/user.js'
+import { querylisttree , querylisttree2 } from '@/api/tree.js'
 export default {
     data() {
     return {
@@ -112,31 +123,15 @@ export default {
       total: 0,
       size: 10,
       page: 1,
-        viewform: {
-       idname: "",
-          name: "",
-          profile: "",
-          legal: "",
-          phone: "",
-          fax: "",
-          addres: "",
-          code: "",
-          note: "",
-        },
         editorform:{
-          CompanyID: "",
-          ID: "",
-          TypeMaterialID: "",
+          Caption: "",
           Density: "",
           AddressProduce: "",
           MaterialGrade: "",
           MaterialModel: "",
           InterfaceID: "",
           Remark: "",
-          Caption:'412',
-          ActionUserID:'4123',
-          ActionUserName:'4231',
-          TypeMaterialItemID:'423',
+          ID:'',
         },
       tableData: [
         {
@@ -151,6 +146,18 @@ export default {
           Remark: "",
         }
       ],
+      options1: [{
+          value: '',
+          label: '',
+          title:"",
+        },],
+        TypeMaterialID: '',
+        options2: [{
+          value: '',
+          label: '',
+          title: '',
+        },],
+        TypeMaterialItemID: '',
       viewdialog: false,
       editordialog:false,
     };
@@ -191,8 +198,8 @@ export default {
     },
     querylist(){
       querylistylxx({
-            page: this.page,
-        intPageSize: this.size,
+         page: this.page,
+         intPageSize: this.size,
          Comid:localStorage.getItem('comid'),
          TypeMaterialID:this.value3
       }).then((response) => {
@@ -217,9 +224,8 @@ export default {
      modify() {
       modifyylxx(
       JSON.stringify({
-      CompanyID:this.editorform.CompanyID ,
-      ID:this.editorform.ID,
-      TypeMaterialID:this.editorform.TypeMaterialID,
+      CompanyID:localStorage.getItem('comid'),
+      TypeMaterialID:this.TypeMaterialID,
       Density:this.editorform.Density,
       AddressProduce:this.editorform.AddressProduce,
       MaterialGrade:this.editorform.MaterialGrade,
@@ -227,9 +233,10 @@ export default {
       InterfaceID:this.editorform.InterfaceID,
       Remark:this.editorform.Remark,
       Caption:this.editorform.Caption,
-      ActionUserID :this.editorform.ActionUserID,
-      ActionUserName :this.editorform.ActionUserName,
-      TypeMaterialItemID:this.editorform.TypeMaterialItemID  
+      TypeMaterialItemID:this.TypeMaterialItemID,
+      ActionUserID :localStorage.getItem('ActionUserID'),
+      ActionUserName :localStorage.getItem('ActionUserName'),
+      ID :this.editorform.ID
         })
       )
         .then((response) => {
@@ -248,32 +255,32 @@ export default {
         });
     },
     editorClick(row){
-    this.editorform.CompanyID = row.CompanyID
-     this.editorform.ID = row.ID
-      this.editorform.TypeMaterialID = row.TypeMaterialID
-       this.editorform.Density = row.Density
-        this.editorform.AddressProduce = row.AddressProduce
-         this.editorform.MaterialGrade = row.MaterialGrade
-          this.editorform.MaterialModel = row.MaterialModel
-           this.editorform.InterfaceID = row.InterfaceID
-           this.editorform.Remark = row.Remark
-          //  this.editorform.MaterialGrade = row.Caption
-          // this.editorform.MaterialModel = row.ActionUserID
-          //  this.editorform.InterfaceID = row.ActionUserName
-          //  this.editorform.Remark = row.TypeMaterialItemID
+      this.TypeMaterialID = row.TypeMaterialID
+      this.TypeMaterialItemID = row.TypeMaterialItemID
+      this.editorform.Density = row.Density
+      this.editorform.AddressProduce = row.AddressProduce
+      this.editorform.MaterialGrade = row.MaterialGrade
+      this.editorform.MaterialModel = row.MaterialModel
+      this.editorform.InterfaceID = row.InterfaceID
+      this.editorform.Remark = row.Remark
+      this.editorform.Caption = row.Caption
+      this.editorform.ID = row.ID
     },
-    handleClick(row) {
-       this.viewform.idname = row.idname
-     this.viewform.name = row.name
-      this.viewform.profile = row.profile
-       this.viewform.legal = row.legal
-        this.viewform.phone = row.phone
-         this.viewform.fax = row.fax
-          this.viewform.addres = row.addres
-           this.viewform.code = row.code
-           this.viewform.note = row.note
-      // console.log(row)
-    },
+    querylisttree(){
+        querylisttree({
+          Comid : localStorage.getItem('comid')
+        }).then((response)=>{
+          this.options1 = response.data
+        })
+      },
+    queryselecttree(){
+        querylisttree2({
+           comid : localStorage.getItem('comid'),
+           typeMaterialID : this.TypeMaterialID,
+        }).then((response)=>{
+           this.options2 = response.data
+        })
+      },
     headClass() {
       return "text-align:center";
     },

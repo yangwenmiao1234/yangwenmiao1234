@@ -1,6 +1,7 @@
 <template>
   <div class="login-container">
-    <el-form ref="loginForm" :model="loginForm" :rules="loginRules" class="login-form" auto-complete="on" label-position="left">
+    <div class="login">
+      <el-form ref="loginForm" :model="loginForm" :rules="loginRules" class="login-form" auto-complete="on" label-position="left">
 
       <div class="title-container">
         <h3 class="title">惠工智科</h3>
@@ -49,6 +50,7 @@
       </div> -->
 
     </el-form>
+    </div>
   </div>
 </template>
 
@@ -188,15 +190,28 @@ $light_gray:#eee;
   width: 100%;
   background-color: $bg;
   overflow: hidden;
+ .login{
+     background-color: #eeb414;
+     width: 500px;
+     border:3px solid rgb(221, 215, 215);
+     height: 500px;
+     margin: 0 auto;
+     margin-top: 20%;
+     margin-left: 66%;
+     box-shadow : 2px 2px 10px  #8f7737;
+     overflow: hidden;
+      .login-form {
+        position: relative;
+        width: 400px;
+        max-width: 100%;
+        // padding: 160px 35px 0;
+        margin: 0 auto;
+        margin-top: 20%;
+        overflow: hidden;
+      }
 
-  .login-form {
-    position: relative;
-    width: 520px;
-    max-width: 100%;
-    padding: 160px 35px 0;
-    margin: 0 auto;
-    overflow: hidden;
-  }
+ }
+
 
   .tips {
     font-size: 14px;

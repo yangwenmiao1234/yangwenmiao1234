@@ -14,7 +14,7 @@
       </el-form>
       <div class="from-2" style="">
         <el-button
-          class="from-2-1"
+          class="from-2-1"                                                                                  
           icon="el-icon-zoom-in"
           @click="query()"
           type="primary"

@@ -83,9 +83,18 @@
           margin-left: 10%;
           width: 120px;
           background-color: orange;
-          border: 2px solid rgb(0 0 0 / 67%);
         "
-        @click="(maindialog = true)"
+        @click="queryselect()"
+        >刷新</el-button
+      >
+      <el-button
+        type="primary"
+        style="
+          margin-left: 10%;
+          width: 120px;
+          background-color: orange;
+        "
+        @click="(maindialog = true) "
         >增加</el-button
       >
       <el-button
@@ -94,7 +103,6 @@
           margin-left: 2%;
           width: 120px;
           background-color: orange;
-          border: 2px solid rgb(0 0 0 / 67%);
         "
         @click="get"
         >获取pcs库存</el-button
@@ -105,7 +113,6 @@
           margin-left: 2%;
           width: 120px;
           background-color: orange;
-          border: 2px solid rgb(0 0 0 / 67%);
         "
         @click="update"
         >更新pcs原料</el-button
@@ -299,11 +306,17 @@
                 <div
                   class="body_dialog2"
                 >
-                  <el-form-item label="原料名称">
-                    <el-input  class="body_dialog_input" v-model="mainfrom.caption"></el-input>
-                  </el-form-item>
-                  <el-form-item label="最大容重">
-                    <el-input class="body_dialog_input" v-model="mainfrom.storeWeightUnit"></el-input>
+                <span>料仓名称</span>
+                  <el-select v-model="value2" filterable placeholder="请选择">
+                    <el-option
+                      v-for="item in options2"
+                      :key="item.value"
+                      :label="item.Caption"
+                      :value="item.ID">
+                    </el-option>
+                  </el-select>
+                  <el-form-item style="margin-top:7%" label="最大容重">
+                    <el-input class="body_dialog_input"  v-model="mainfrom.storeWeightUnit"></el-input>
                   </el-form-item>
                   <el-form-item label="料仓体积">
                     <el-input class="body_dialog_input" v-model="mainfrom.storeZJ"></el-input>
@@ -388,7 +401,7 @@
   </div>
 </template>
 <script>
-import {addlcxx} from '@/api/user.js'
+import {addlcxx , querylistylxx} from '@/api/user.js'
 import {querylisttree , addtree1 , addtree2 , modifytree1 , modifytree2 ,deletetree1 , deletetree2} from '@/api/tree.js'
 import Lcxx from "@/components/table/liaocangxinxi.vue";
 import Scx from "@/components/tree/treescx.vue";
@@ -508,18 +521,23 @@ export default {
       selectOrg: {
         orgsid: []
       },
+       options2: [{
+          ID:'',
+          Caption:'',
+          value: '',
+          label: ''
+        }],
+        value2: '',
       arr:[]
     };
   },
   methods: {
     shuxingjiego() {
-    localStorage.setItem("comid" , this.comid)
         querylisttree({
-          comid:localStorage.getItem("comid")
+        Comid:localStorage.getItem('comid')
         }).then(response=>{
          this.data=response.data
          this.options=response.data
-          Comid:localStorage.getItem('comid')
         }).catch((error)=>{
           alert('获取失败')
         })
@@ -600,7 +618,6 @@ export default {
         this.Modifyfrom.companyID=this.companyID
         this.Modifydialog=true
       }else if(aa==='二级节点'){
-        console.log(data);
         this.Modifyfrom2.ID=data.value
         this.Modifyfrom2.interfaceID=data.interfaceID
         this.Modifyfrom2.caption=data.title
@@ -786,9 +803,20 @@ export default {
       this.Radarfrom.commIDAddress=""
       this.Radarfrom.id=""
     },
+    queryselect(){
+      querylistylxx({
+         page: this.page,
+         intPageSize: this.size,
+         Comid:localStorage.getItem('comid'),
+         TypeMaterialID:localStorage.getItem('comid')
+      }).then((response)=>{
+        this.options2 = response.data.data
+        console.log(response.data.data)
+      })
+    }
   },
   mounted(){
-  
+    this.queryselect()
   }
 };
 </script>

@@ -11,8 +11,8 @@
         >
         </el-option>
       </el-select>
-      <el-button  style="" @click="treedialod=true" type="primary" plain>...</el-button>
-      <el-button class="body_button_1" size="small" style="" @click="adddialog=true" type="primary" plain>增加</el-button>
+      <el-button  style="" @click="addtype()" type="primary" plain>...</el-button>
+      <el-button class="body_button_1" size="small" style="" @click="adddialog=true,querylisttree()" type="primary" plain>增加</el-button>
       <el-button class="body_button_2" size="small" style="" @click="query()" type="primary" plain>刷新</el-button>
         </div>
         <div class="table" style="">
@@ -24,13 +24,25 @@
     <div class="body_dialog">
       <el-form :label-position="editorlabel" label-width="80px" :model="addform">
   <el-form-item label="名称">
-    <el-input v-model="addform.CompanyID"></el-input>
-  </el-form-item>
-  <el-form-item label="ID">
-    <el-input v-model="addform.ID"></el-input>
+    <el-input v-model="addform.Caption"></el-input>
   </el-form-item>
   <el-form-item label="类型">
-    <el-input v-model="addform.TypeMaterialID"></el-input>
+  <el-select style="width:110px" @change="queryselecttree()" v-model="TypeMaterialID" filterable placeholder="请选择">
+    <el-option
+      v-for="item in options1"
+      :key="item.value"
+      :label="item.title"
+      :value="item.value">
+    </el-option>
+  </el-select>
+  <el-select style="width:110px;margin-left:3%" v-model="TypeMaterialItemID" filterable placeholder="请选择">
+    <el-option
+      v-for="item in options2"
+      :key="item.value"
+      :label="item.title"
+      :value="item.value">
+    </el-option>
+  </el-select>
   </el-form-item>
     <el-form-item label="密度">
     <el-input v-model="addform.Density"></el-input>
@@ -47,9 +59,6 @@
     <el-form-item label="接口编码">
     <el-input v-model="addform.InterfaceID"></el-input>
   </el-form-item>
-  <el-form-item label="公司ID">
-    <el-input v-model="addform.Comid"></el-input>
-  </el-form-item>
     <el-form-item label="备注">
     <el-input v-model="addform.Remark"></el-input>
   </el-form-item>
@@ -62,33 +71,42 @@
               >
             </span>
   </el-dialog>
+  <Dialog ref="dialog">
+  </Dialog>
         </div>
     </div>
 </template>
 <script>
 import Table from '@/views/yuanliaoguanli/yuanliaoxinxi/table.vue'
+import Dialog from '@/views/yuanliaoguanli/yuanliaoxinxi/dialog.vue'
 import { querylistylxx , addylxx , deletesylxx , modifyylxx } from '@/api/user.js'
+import { querylisttree , querylisttree2 } from '@/api/tree.js'
   export default {
-      components :{ Table },
+      components :{ Table , Dialog},
     data() {
       return {
         addform:{
-          CompanyID: "",
-          ID: "",
-          TypeMaterialID: "",
+          Caption: "",
           Density: "",
           AddressProduce: "",
           MaterialGrade: "",
           MaterialModel: "",
           InterfaceID: "",
           Remark: "",
-          Caption:'412',
-          ActionUserID:'4123',
-          ActionUserName:'4231',
-          TypeMaterialItemID:'423',
-          Comid:'HGMES'
         },
         adddialog:false,
+        options1: [{
+          value: '',
+          label: '',
+          title:"",
+        },],
+        TypeMaterialID: '',
+        options2: [{
+          value: '',
+          label: '',
+          title: '',
+        },],
+        TypeMaterialItemID: '',
         options3: [
         {
           value: "HGMES",
@@ -104,9 +122,15 @@ import { querylistylxx , addylxx , deletesylxx , modifyylxx } from '@/api/user.j
         },
       ],
       value3: "",
+      arr : [],
       };
     },
     methods:{
+      addtype(){
+        const aa = this.$refs.dialog
+        aa.dialogVisible = true
+        aa.shuxingjiego()
+      },
         setup(){
         },
         query1(){
@@ -142,10 +166,9 @@ import { querylistylxx , addylxx , deletesylxx , modifyylxx } from '@/api/user.j
       add() {
       const ss = this.$refs.table;
       addylxx(
-        JSON.stringify({
-      CompanyID:this.addform.CompanyID ,
-      ID:this.addform.ID,
-      TypeMaterialID:this.addform.TypeMaterialID,
+      JSON.stringify({
+      CompanyID:localStorage.getItem('comid'),
+      TypeMaterialID:this.TypeMaterialID,
       Density:this.addform.Density,
       AddressProduce:this.addform.AddressProduce,
       MaterialGrade:this.addform.MaterialGrade,
@@ -153,10 +176,9 @@ import { querylistylxx , addylxx , deletesylxx , modifyylxx } from '@/api/user.j
       InterfaceID:this.addform.InterfaceID,
       Remark:this.addform.Remark,
       Caption:this.addform.Caption,
-      ActionUserID :this.addform.ActionUserID,
-      ActionUserName :this.addform.ActionUserName,
-      TypeMaterialItemID:this.addform.TypeMaterialItemID, 
-      Comid:this.addform.Comid
+      TypeMaterialItemID:this.TypeMaterialItemID,
+      ActionUserID :localStorage.getItem('ActionUserID'),
+      ActionUserName :localStorage.getItem('ActionUserName'),
         })
       ).then((response) => {
           this.$message({
@@ -171,7 +193,22 @@ import { querylistylxx , addylxx , deletesylxx , modifyylxx } from '@/api/user.j
             type: "error",
           });
         });
-    },
+       },
+      querylisttree(){
+        querylisttree({
+          Comid : localStorage.getItem('comid')
+        }).then((response)=>{
+          this.options1 = response.data
+        })
+      },
+      queryselecttree(){
+        querylisttree2({
+           comid : localStorage.getItem('comid'),
+           typeMaterialID : this.TypeMaterialID,
+        }).then((response)=>{
+           this.options2 = response.data
+        })
+      }
     },
     mounted(){
       

@@ -173,16 +173,16 @@ export default [
         ]
     },
     {
-        path: '/shengchanguanli',
+        path: '/wuliuguanli',
         component: Layout,
-        name: 'shengchanguanli',
-        redirect: '/shengchanguanli/jiaoyunche',
+        name: 'wuliuguanli',
+        redirect: '/wuliuguanli/jiaoyunche',
         meta: { title: '物流管理', icon: 'el-icon-s-help' },
         children: [
             {
                 path: '/jiaoyunche',
                 name: 'Jiaoyunche',
-                component: () => import('@/views/shengchanguanli/jiaoyunche/index'),
+                component: () => import('@/views/wuliuguanli/jiaoyunche/index'),
                 meta: { title: '搅运车信息', icon: 'form' }
             },
         ]

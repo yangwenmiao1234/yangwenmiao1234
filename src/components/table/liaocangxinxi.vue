@@ -197,11 +197,10 @@ export default {
       querylistlcxx({
         page: this.page,
         intPageSize: this.size,
-         Comid:localStorage.getItem('comid')
+        Comid:localStorage.getItem('comid')
       })
         .then((response) => {
           this.tableData = response.data.data;
-          console.log(response.data.data)
           this.page = response.data.page;
           this.size = response.data.PageSize;
           this.total = response.data.dataCount;

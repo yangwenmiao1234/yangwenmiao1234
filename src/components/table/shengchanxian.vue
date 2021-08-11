@@ -54,25 +54,28 @@
         :model="editorform"
       >
         <div class="editorform-1">
-          <el-form-item label="名称">
-            <el-input v-model="editorform.AutoID"></el-input>
-          </el-form-item>
-          <el-form-item label="主机方量">
-            <el-input v-model="editorform.CompanyID"></el-input>
-          </el-form-item>
-          <el-form-item label="设备品牌">
-            <el-input v-model="editorform.ID"></el-input>
-          </el-form-item>
-          <el-form-item label="设备型号">
-            <el-input v-model="editorform.Caption"></el-input>
-          </el-form-item>
-          <el-form-item label="接口编码">
-            <el-input v-model="editorform.MachineSquare"></el-input>
-          </el-form-item>
-          <el-form-item label="备注">
-            <el-input v-model="editorform.MachineBrand"></el-input>
-          </el-form-item>
-        </div>
+            <el-form-item label="名称">
+              <el-input v-model="editorform.caption"></el-input>
+            </el-form-item>
+            <el-form-item label="主机方量">
+              <el-input v-model="editorform.machineSquare"></el-input>
+            </el-form-item>
+            <el-form-item label="value值">
+              <el-input v-model="editorform.value"></el-input>
+            </el-form-item>
+            <el-form-item label="设备品牌">
+              <el-input v-model="editorform.machineBrand"></el-input>
+            </el-form-item>
+            <el-form-item label="设备型号">
+              <el-input v-model="editorform.machineModel"></el-input>
+            </el-form-item>
+            <el-form-item label="接口编码">
+              <el-input v-model="editorform.interfaceID"></el-input>
+            </el-form-item>
+            <el-form-item label="备注">
+              <el-input v-model="editorform.remark"></el-input>
+            </el-form-item>
+          </div>
       </el-form>
       <span slot="footer" class="dialog-footer">
         <el-button @click="editordialog = false">取 消</el-button>
@@ -95,25 +98,18 @@
             {{ scope.$index + 1 }}
           </template>
         </el-table-column>
-        <el-table-column prop="AutoID" label="名称" width=""> </el-table-column>
-        <el-table-column prop="CompanyID" label="主机方量" width="">
+        <el-table-column prop="Caption" label="名称" width=""> </el-table-column>
+        <el-table-column prop="MachineSquare" label="主机方量" width="">
         </el-table-column>
-        <el-table-column prop="ID" label="设备品牌" width=""> </el-table-column>
-        <el-table-column prop="Caption" label="设备型号" width="">
+        <el-table-column prop="MachineBrand" label="设备品牌" width=""> </el-table-column>
+        <el-table-column prop="MachineModel" label="设备型号" width="">
         </el-table-column>
-        <el-table-column prop="MachineSquare" label="接口编码" width="">
+        <el-table-column prop="InterfaceID" label="接口编码" width="">
         </el-table-column>
-        <el-table-column prop="MachineBrand" label="备注" width="">
+        <el-table-column prop="Remark" label="备注" width="">
         </el-table-column>
         <el-table-column fixed="right" label="操作" width="150px">
           <template slot-scope="scope">
-            <el-button
-              style="color: rgb(0 0 0 / 67%)"
-              @click="handleClick(scope.row), (viewdialog = true)"
-              type="text"
-              size="small"
-              >查看</el-button
-            >
             <el-button
               style="color: rgb(0 0 0 / 67%)"
               type="text"
@@ -171,12 +167,13 @@ export default {
         MachineBrand: "",
       },
       editorform: {
-        AutoID: "",
-        CompanyID: "",
-        ID: "",
-        Caption: "",
-        MachineSquare: "",
-        MachineBrand: "",
+        caption: "",
+        machineSquare: "",
+        machineBrand: "",
+        machineModel: "",
+        interfaceID: "",
+        remark: "",
+        value:'',
       },
       tableData: [
         {
@@ -199,7 +196,7 @@ export default {
       queryshenchanxianxinxi({
         page: this.page,
         intPageSize: this.size,
-         Comid:localStorage.getItem('comid')
+        Comid:localStorage.getItem('comid')
       })
         .then((response) => {
           this.tableData = response.data.data;
@@ -217,23 +214,24 @@ export default {
         });
     },
     editorClick(row) {
-      this.editorform.AutoID = row.AutoID;
-      this.editorform.CompanyID = row.CompanyID;
-      this.editorform.ID = row.ID;
-      this.editorform.Caption = row.Caption;
-      this.editorform.MachineSquare = row.MachineSquare;
-      this.editorform.MachineBrand = row.MachineBrand;
+      this.editorform.caption = row.Caption;
+      this.editorform.machineSquare = row.MachineSquare;
+      this.editorform.machineModel = row.MachineModel;
+      this.editorform.machineBrand = row.MachineBrand;
+      this.editorform.interfaceID = row.InterfaceID;
+      this.editorform.remark = row.Remark;
     },
     modify() {
-      alert("123");
       modifyscxxx(
         JSON.stringify({
-          AutoID: this.editorform.AutoID,
-          CompanyID: this.editorform.CompanyID,
-          ID: this.editorform.ID,
-          Caption: this.editorform.Caption,
-          MachineSquare: this.editorform.MachineSquare,
-          MachineBrand: this.editorform.MachineBrand,
+          MachineBrand: this.editorform.machineBrand,
+          CompanyID: localStorage.getItem('comid'),
+          ID: this.editorform.value,
+          Caption: this.editorform.caption,
+          MachineSquare: this.editorform.machineSquare,
+          InterfaceID: this.editorform.interfaceID,
+          MachineModel: this.editorform.machineModel,
+          Remark: this.editorform.remark,
         })
       )
         .then((response) => {
@@ -308,13 +306,11 @@ export default {
         .catch((_) => {});
     },
     handleSizeChange(val) {
-      alert("1");
       console.log(val);
       this.size = val;
       this.querylist();
     },
     handleCurrentChange(val) {
-      alert("2");
       console.log(`当前页: ${val}`);
       this.page = val;
       this.querylist();

@@ -25,6 +25,9 @@ const mutations = {
   SET_AVATAR: (state, avatar) => {
     state.avatar = avatar
   },
+  // SET_GETROUTER:(state, avatar)=>{
+
+  // }
 }
 
 const actions = {
