@@ -30,8 +30,6 @@
             check-on-click-node="true"
             :default-checked-keys="[1]"
             :props="defaultProps"
-            @check="handleCheck"
-           @check-change="handleCheckChange"
           > 
           <span class="custom-tree-node" slot-scope="{ node, data }">
         <span>{{ node.label }}</span>
@@ -61,7 +59,7 @@
     </el-dialog>
     <div class="select">
       <span>类型：</span>
-      <el-select v-model="value" placeholder="请选择">
+      <el-select @change="querylist()" v-model="value" placeholder="请选择">
         <el-option
           v-for="item in options"
           :key="item.value"
@@ -94,7 +92,7 @@
           width: 120px;
           background-color: orange;
         "
-        @click="(maindialog = true) "
+        @click="addmaindialog()"
         >增加</el-button
       >
       <el-button
@@ -129,7 +127,6 @@
       >
         <span slot="footer" class="dialog-footer">
           <el-form
-            :label-position="labelPosition"
             label-width="80px"
             :model="addfrom"
           >
@@ -165,7 +162,6 @@
       >
         <span slot="footer" class="dialog-footer">
           <el-form
-            :label-position="labelPosition"
             label-width="80px"
             :model="Modifyfrom"
           >
@@ -200,7 +196,6 @@
       >
         <span slot="footer" class="dialog-footer">
            <el-form
-            :label-position="labelPosition"
             label-width="80px"
             :model="addfrom2"
           >
@@ -238,7 +233,6 @@
       >
         <span slot="footer" class="dialog-footer">
           <el-form
-            :label-position="labelPosition"
             label-width="80px"
             :model="Modifyfrom2"
           >
@@ -275,39 +269,38 @@
         :before-close="handleClose"
       >
         <span slot="footer" class="dialog-footer">
-          <el-tabs v-model="activeName" type="card" @tab-click="handleClick">
+          <el-tabs v-model="activeName" type="card">
             <el-tab-pane label="主要信息" name="first">
               <el-form
-                :label-position="labelPosition"
                 label-width="82px"
                 :model="mainfrom"
               >
                 <div style="display:flex">
                   <div class="" style="">
                   <el-form-item  label="料仓全称">
-                    <el-input class="body_dialog_input" v-model="mainfrom.companyID"></el-input>
+                    <el-input class="body_dialog_input" v-model="mainfrom.Caption"></el-input>
                   </el-form-item>
                   <el-form-item label="数字编号">
-                    <el-input class="body_dialog_input" v-model="mainfrom.storeWeightPointNum"></el-input>
+                    <el-input class="body_dialog_input" v-model="mainfrom.commIDNum"></el-input>
                   </el-form-item>
                   <el-form-item label="排序号">
-                    <el-input class="body_dialog_input" v-model="mainfrom.autoID"></el-input>
+                    <el-input class="body_dialog_input" v-model="mainfrom.orderIndex"></el-input>
                   </el-form-item>
                   <el-form-item label="接口编码">
                     <el-input class="body_dialog_input" v-model="mainfrom.interfaceID"></el-input>
                   </el-form-item>
                   <el-form-item label="备注">
-                    <el-input class="body_dialog_input" v-model="mainfrom.storeWeightMax"></el-input>
+                    <el-input class="body_dialog_input" v-model="mainfrom.remark"></el-input>
                   </el-form-item>
                   <el-form-item label="高位报警值">
-                    <el-input class="body_dialog_input" v-model="mainfrom.heightTop"></el-input>
+                    <el-input class="body_dialog_input" v-model="mainfrom.alarmHeightMax"></el-input>
                   </el-form-item>
                 </div>
                 <div
                   class="body_dialog2"
                 >
-                <span>料仓名称</span>
-                  <el-select v-model="value2" filterable placeholder="请选择">
+                <span>原料名称</span>
+                  <el-select v-model="materialName" filterable placeholder="请选择">
                     <el-option
                       v-for="item in options2"
                       :key="item.value"
@@ -316,19 +309,26 @@
                     </el-option>
                   </el-select>
                   <el-form-item style="margin-top:7%" label="最大容重">
-                    <el-input class="body_dialog_input"  v-model="mainfrom.storeWeightUnit"></el-input>
+                    <el-input class="body_dialog_input"  v-model="mainfrom.storeWeightMax"></el-input>
                   </el-form-item>
                   <el-form-item label="料仓体积">
-                    <el-input class="body_dialog_input" v-model="mainfrom.storeZJ"></el-input>
+                    <el-input class="body_dialog_input" v-model="mainfrom.storeVolumeMax"></el-input>
                   </el-form-item>
-                  <el-form-item label="活动形式">
-                    <el-input class="body_dialog_input" v-model="mainfrom.orderIndex"></el-input>
+                  <el-form-item label="库存单位">
+                    <el-select v-model="storeWeightUnit" filterable placeholder="请选择">
+                    <el-option
+                      v-for="item in options3"
+                      :key="item.value"
+                      :label="item.label"
+                      :value="item.value">
+                    </el-option>
+                  </el-select>
                   </el-form-item>
                   <el-form-item label="库存精确位">
-                    <el-input class="body_dialog_input" v-model="mainfrom.typeMaterialID"></el-input>
+                    <el-input class="body_dialog_input" v-model="mainfrom.storeWeightPointNum"></el-input>
                   </el-form-item>
                   <el-form-item label="低位报警值">
-                    <el-input class="body_dialog_input" v-model="mainfrom.heightBottom"></el-input>
+                    <el-input class="body_dialog_input" v-model="mainfrom.alarmHeightMin"></el-input>
                   </el-form-item>
                 </div>
                 </div>
@@ -336,20 +336,19 @@
             </el-tab-pane>
             <el-tab-pane label="雷达参数" name="second">
               <el-form
-                :label-position="labelPosition"
                 label-width="82px"
                 :model="Radarfrom"
               >
                 <div style="display:flex">
                     <div class="" style="">
                   <el-form-item label="料仓直径">
-                    <el-input  class="body_dialog_input" v-model="Radarfrom.alarmHeightMax"></el-input>
+                    <el-input  class="body_dialog_input" v-model="Radarfrom.storeZJ"></el-input>
                   </el-form-item>
                   <el-form-item label="圆柱高度">
-                    <el-input class="body_dialog_input" v-model="Radarfrom.alarmHeightMin"></el-input>
+                    <el-input class="body_dialog_input" v-model="Radarfrom.heightTop"></el-input>
                   </el-form-item>
                   <el-form-item label="椎体高度">
-                    <el-input class="body_dialog_input" v-model="Radarfrom.alarmWeightMax"></el-input>
+                    <el-input class="body_dialog_input" v-model="Radarfrom.heightBottom"></el-input>
                   </el-form-item>
                   <el-form-item label="雷达线长">
                     <el-input class="body_dialog_input" v-model="Radarfrom.radarLineLength"></el-input>
@@ -357,18 +356,15 @@
                   <el-form-item label="雷达盲区">
                     <el-input class="body_dialog_input" v-model="Radarfrom.radarDeadzone"></el-input>
                   </el-form-item>
-                  <el-form-item label="id">
-                    <el-input class="body_dialog_input" v-model="Radarfrom.id"></el-input>
-                  </el-form-item>
                 </div>
                 <div
                   class="body_dialog2"
                 >
                   <el-form-item label="高位报警">
-                    <el-input  class="body_dialog_input" v-model="Radarfrom.commIDNum"></el-input>
+                    <el-input  class="body_dialog_input" v-model="Radarfrom.alarmHeightMax"></el-input>
                   </el-form-item>
                   <el-form-item label="低位报警">
-                    <el-input class="body_dialog_input" v-model="Radarfrom.commIDValue"></el-input>
+                    <el-input class="body_dialog_input" v-model="Radarfrom.alarmHeightMin"></el-input>
                   </el-form-item>
                   <el-form-item style="margin-left:-6.7%" label-width="100px" label="雷达高位参数">
                     <el-input class="body_dialog_input" v-model="Radarfrom.stateFlagAlarmMax"></el-input>
@@ -401,46 +397,39 @@
   </div>
 </template>
 <script>
-import {addlcxx , querylistylxx} from '@/api/user.js'
+import {addlcxx , querylistlcxx , querylistylxx} from '@/api/user.js'
 import {querylisttree , addtree1 , addtree2 , modifytree1 , modifytree2 ,deletetree1 , deletetree2} from '@/api/tree.js'
 import Lcxx from "@/components/table/liaocangxinxi.vue";
-import Scx from "@/components/tree/treescx.vue";
-import { Calendar } from 'element-ui';
-// import { title } from '@/settings';
-// import { getUniqueId } from 'devtools/packages/app-backend-vue2/src/components/util';
 export default {
-  components: { Lcxx, Scx },
+  components: { Lcxx },
   //   components: {  },
   data() {
     return {
       companyID:"HGMES",
       comid:"HGMES",
       mainfrom: {
-        companyID: "",
-        storeWeightPointNum: "",
-        autoID: "",
-        interfaceID: "",
-        storeWeightMax: "",
-        heightTop: "",
-        caption: "",
-        storeWeightUnit: "",
-        storeZJ: "",
+        Caption : "",
+        commIDNum: "",
         orderIndex: "",
-        typeMaterialID: "",
-        heightBottom: "",
+        interfaceID: "",
+        remark: "",
+        alarmHeightMax: "",
+        storeWeightMax: "",
+        storeVolumeMax: "",
+        storeWeightPointNum: "",
+        alarmHeightMin: "",
       },
       Radarfrom: {
-        alarmHeightMax: "",
-        alarmHeightMin: "",
-        alarmWeightMax: "",
+        storeZJ: "",
+        heightTop: "",
+        heightBottom: "",
         radarLineLength: "",
         radarDeadzone: "",
-        commIDNum: "",
-        commIDValue: "",
+        alarmHeightMax: "",
+        alarmHeightMin: "",
         stateFlagAlarmMax: "",
         stateFlagAlarmMin: "",
         commIDAddress: "",
-        id:'',
       },
       maindialog: false,
       activeName: "first",
@@ -525,9 +514,22 @@ export default {
           ID:'',
           Caption:'',
           value: '',
-          label: ''
+          label: '',
+          TypeMaterialID:'',
         }],
-        value2: '',
+        materialName: '',
+       options3: [{
+          value: '0',
+          label: '吨',
+        },
+        {
+          value: '1',
+          label: '千克',
+        },{
+          value: '2',
+          label: '袋',
+        }],
+        storeWeightUnit: '',
       arr:[]
     };
   },
@@ -721,39 +723,50 @@ export default {
           });
         });
     },
+    addmaindialog(){
+      if(this.value!=''){
+        this.maindialog = true
+      }else{
+        this.$message({
+          type:'info',
+          message:'清先选择类型'
+        })
+      }
+    },
     add() {
       const aa = this.$refs.liaocangxinxi
       // alert("增加方法还在实现");
       addlcxx({
-        companyID:this.mainfrom.companyID,
-        storeWeightPointNum:this.mainfrom.storeWeightPointNum,
-        autoID:this.mainfrom.autoID,
-        interfaceID:this.mainfrom.interfaceID,
-        storeWeightMax:this.mainfrom.storeWeightMax,
-        heightTop:this.mainfrom.heightTop,
-        caption:this.mainfrom.caption,
-        storeWeightUnit:this.mainfrom.storeWeightUnit,
-        storeZJ:this.mainfrom.storeZJ,
-        typeMaterialID:this.mainfrom.typeMaterialID,
-        storeVolumeMax:this.mainfrom.storeVolumeMax,
-        heightBottom:this.mainfrom.heightBottom,
-        alarmHeightMax:this.Radarfrom.alarmHeightMax,
-        alarmHeightMin:this.Radarfrom.alarmHeightMin,
-        alarmWeightMax:this.Radarfrom.alarmWeightMax,
-        radarLineLength:this.Radarfrom.radarLineLength,
-        radarDeadzone:this.Radarfrom.radarDeadzone,
-        commIDNum:this.Radarfrom.commIDNum,
-        commIDValue:this.Radarfrom.commIDValue,
-        // stateFlagAlarmMax:this.Radarfrom.stateFlagAlarmMax,
-        // stateFlagAlarmMin:this.Radarfrom.stateFlagAlarmMin, 
-        commIDAddress:this.Radarfrom.commIDAddress,
-        id:this.Radarfrom.id
+        Caption : this.mainfrom.Caption,
+        CommIDNum : this.mainfrom.commIDNum,
+        OrderIndex : this.mainfrom.orderIndex,
+        InterfaceID : this.mainfrom.interfaceID,
+        Remark : this.mainfrom.remark,
+        AlarmHeightMax : this.mainfrom.alarmHeightMax,
+        MaterialID : this.materialName,
+        StoreWeightMax : this.mainfrom.storeWeightMax,
+        StoreVolumeMax : this.mainfrom.storeVolumeMax,
+        StoreWeightPointNum : this.mainfrom.storeWeightPointNum,
+        AlarmHeightMin : this.mainfrom.alarmHeightMin,
+        StoreZJ : this.Radarfrom.storeZJ,
+        HeightTop : this.Radarfrom.heightTop,
+        HeightBottom : this.Radarfrom.heightBottom,
+        RadarLineLength : this.Radarfrom.radarLineLength,
+        RadarDeadzone : this.Radarfrom.radarDeadzone,
+        AlarmHeightMax : this.Radarfrom.alarmHeightMax,
+        AlarmHeightMin : this.Radarfrom.alarmHeightMin,
+        // StateFlagAlarmMax : this.Radarfrom.stateFlagAlarmMax,
+        // StateFlagAlarmMin : this.Radarfrom.stateFlagAlarmMin,
+        CommIDAddress : this.Radarfrom.commIDAddress,
+        CompanyID : localStorage.getItem('comid'),
+        StoreWeightUnit : this.storeWeightUnit,
+        TypeMaterialID : this.value
       }).then((response) => {
                 this.$message({
                   message: "添加成功！",
                   type: "success",
                 });
-                aa.querylist();
+                this.querylist();
                 this.addfalse()
                 // const gonsixinxi=this.$refs.gonsixinxi
                 // gonsixinxi.querylist()
@@ -813,10 +826,33 @@ export default {
         this.options2 = response.data.data
         console.log(response.data.data)
       })
+    },
+    querylist(){
+      const aa = this.$refs.liaocangxinxi
+      querylistlcxx({
+        Typematerialid : this.value,
+        page: aa.page,
+        intPageSize: aa.size,
+        Comid:localStorage.getItem('comid'),
+      }) .then((response) => {
+          aa.tableData = response.data.data;
+          aa.page = response.data.page;
+          aa.size = response.data.PageSize;
+          aa.total = response.data.dataCount;
+          aa.loading = false;
+        })
+        .catch((error) => {
+          aa.loading = true;
+          this.$message({
+            type: "info",
+            message: "查询失败，请联系管理员！",
+          });
+        });
     }
   },
   mounted(){
     this.queryselect()
+    this.shuxingjiego()
   }
 };
 </script>

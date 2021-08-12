@@ -7,8 +7,8 @@
         <el-option
           v-for="item in options"
           :key="item.value"
-          :label="item.label"
-          :value="item.value"
+          :label="item.Caption"
+          :value="item.ID"
         >
         </el-option>
       </el-select>
@@ -50,7 +50,7 @@
     <div class="button" style="display:flex">
       <el-button size="small" @click="add(),adddialog=true" style="width:80px;margin-left:3%;margin-top:2.5%" type="primary" plain>添加</el-button>
       <el-button size="small" @click="out()" style="width:80px;margin-left:3%;margin-top:2.5%" type="primary" plain>导出</el-button>
-      <el-button size="small" @click="query()" style="width:80px;margin-left:3%;margin-top:2.5%" type="primary" plain>查询</el-button>
+      <el-button size="small" @click="query(),queryselect()" style="width:80px;margin-left:3%;margin-top:2.5%" type="primary" plain>查询</el-button>
       <el-button size="small" @click="setup(),setupdialog=true" style="width:80px;margin-left:3%;margin-top:2.5%" type="primary" plain>设置</el-button>
     </div>
     <div v-if="zhuxianlu" style="margin-top:3%;height:450px">
@@ -202,6 +202,8 @@ v-dialogDrag
   </div>
 </template>
 <script>
+import { queryshenchanxianxinxi} from "@/api/user.js";
+import { shiyanshi , addshiyanshi , modifyshiyanshi , deleteshiyanshi } from "@/api/shiyanshi.js"
 import Zhuyao from '@/components/biaozhunpeifang/table.vue'
 import Atable from '@/components/biaozhunpeifang/atable.vue'
 import Btable from '@/components/biaozhunpeifang/btable.vue'
@@ -216,6 +218,9 @@ export default {
   components:{ Zhuyao , Atable , Btable , Ctable , Zb , Bzhubiao ,Czhubiao ,Adda , Addb , Addc},
   data() {
     return {
+      page:1,
+      size:10,
+      total:'',
       addatable:true,
       addbtable:false,
       addctable:false,
@@ -253,17 +258,11 @@ export default {
       radio: "1",
       options: [
         {
-          value: "选项1",
-          label: "1线",
-        },
-        {
-          value: "选项2",
-          label: "2线",
-        },
-        {
-          value: "选项3",
-          label: "3线",
-        },
+          value: "",
+          label: "",
+          ID:'',
+          Caption:"",
+        }
       ],
       value: "",
       options2: [
@@ -332,6 +331,18 @@ export default {
     };
   },
   methods:{
+    queryselect(){
+      var page = '1'
+      var size = '10'
+        queryshenchanxianxinxi({
+          page: page,
+        intPageSize: size,
+        Comid:localStorage.getItem('comid')
+        }).then(response=>{
+          this.options = response.data.data
+        })
+    },
+     
     add(){
      
     },
@@ -448,7 +459,11 @@ export default {
           alert("-3")
           this.addctable=true
         }
-      }
+      },
+  }, 
+  mounted(){
+    this.queryselect()
+    this.querylist()
   }
 };
 </script>

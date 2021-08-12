@@ -1,6 +1,6 @@
 <template>
   <div class="body">
-    <el-tabs v-model="activeName" type="card" @tab-click="handleClick">
+    <el-tabs v-model="activeName" type="card">
       <el-tab-pane label="生产线" name="first">
         <div class="from">
           <el-form :inline="true" :model="formInline" class="demo-form-inline">
@@ -48,10 +48,8 @@
         title="添加"
         :visible.sync="adddialog"
         width="30%"
-        :before-close="handleClose"
       >
         <el-form
-          :label-position="editorlabel"
           label-width="80px"
           :model="addform"
         >

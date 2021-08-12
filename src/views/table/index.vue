@@ -44,16 +44,16 @@
         :before-close="handleClose"
       >
         <el-form
-          :label-position="labelPosition"
           label-width="88px"
           :model="addform"
+          :rules="formRules"
         >
           <div class="" style="display: flex">
             <div>
-              <el-form-item label="公司编号">
+              <el-form-item label="公司编号" prop="ID" :rules="[{required: true, trigger: 'blur', message: '公司编号不能为不能为空'}]">
                 <el-input class="body_input" v-model="addform.ID"></el-input>
               </el-form-item>
-              <el-form-item label="公司全称">
+              <el-form-item label="公司全称" prop="Caption" :rules="[{required: true, trigger: 'blur', message: '公司全称不能为不能为空'}]">
                 <el-input class="body_input" v-model="addform.Caption"></el-input>
               </el-form-item>
               <el-form-item label="公司简介">
@@ -104,11 +104,11 @@
 // import plopfile from 'plopfile';
 import Gsxx from "@/components/table/gonsixinxi.vue";
 import { addgonsixinxi, gonsixin } from "@/api/user";
-import gonsixinxiVue from "@/components/table/gonsixinxi.vue";
 export default {
   components: { Gsxx },
   data() {
     return {
+      formRules:{},
       adddialog: false,
       putdialog: false,
       formInline: {

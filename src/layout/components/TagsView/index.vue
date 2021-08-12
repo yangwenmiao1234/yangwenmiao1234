@@ -62,8 +62,8 @@ export default {
     }
   },
   mounted() {
-    this.initTags()
-    this.addTags()
+    // this.initTags()
+    // this.addTags()
   },
   methods: {
     isActive(route) {
@@ -74,24 +74,24 @@ export default {
     },
     filterAffixTags(routes, basePath = '/') {
       let tags = []
-      routes.forEach(route => {
-        if (route.meta && route.meta.affix) {
-          const tagPath = path.resolve(basePath, route.path)
-          tags.push({
-            fullPath: tagPath,
-            path: tagPath,
-            name: route.name,
-            meta: { ...route.meta }
-          })
-        }
-        if (route.children) {
-          const tempTags = this.filterAffixTags(route.children, route.path)
-          if (tempTags.length >= 1) {
-            tags = [...tags, ...tempTags]
-          }
-        }
-      })
-      return tags
+      // routes.forEach(route => {
+      //   if (route.meta && route.meta.affix) {
+      //     const tagPath = path.resolve(basePath, route.path)
+      //     tags.push({
+      //       fullPath: tagPath,
+      //       path: tagPath,
+      //       name: route.name,
+      //       meta: { ...route.meta }
+      //     })
+      //   }
+      //   if (route.children) {
+      //     const tempTags = this.filterAffixTags(route.children, route.path)
+      //     if (tempTags.length >= 1) {
+      //       tags = [...tags, ...tempTags]
+      //     }
+      //   }
+      // })
+      // return tags
     },
     initTags() {
       const affixTags = this.affixTags = this.filterAffixTags(this.routes)

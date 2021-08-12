@@ -4,37 +4,8 @@
   -->
   <div style="width:100%">
     <div>
-      <el-dialog title="详情" v-dialogDrag :visible.sync="viewdialog"  :before-close="handleClose">
-      <el-form :label-position="viewlabel" label-width="80px" :model="viewform">
-        <el-form-item label="料仓编号">
-          <el-input v-model="viewform.idname"></el-input>
-        </el-form-item>
-        <el-form-item label="料仓全称">
-          <el-input v-model="viewform.name"></el-input>
-        </el-form-item>
-        <el-form-item label="原料名称">
-          <el-input v-model="viewform.profile"></el-input>
-        </el-form-item>
-        <el-form-item label="最大容量">
-          <el-input v-model="viewform.legal"></el-input>
-        </el-form-item>
-        <el-form-item label="库存单位">
-          <el-input v-model="viewform.phone"></el-input>
-        </el-form-item>
-        <el-form-item label="库存精确位">
-          <el-input v-model="viewform.fax"></el-input>
-        </el-form-item>
-        <el-form-item label="数字编号">
-          <el-input v-model="viewform.addres"></el-input>
-        </el-form-item>
-        <el-form-item label="备注">
-          <el-input v-model="viewform.note"></el-input>
-        </el-form-item>
-      </el-form>
-    </el-dialog>
     <el-dialog title="编辑" v-dialogDrag :visible.sync="editordialog"  :before-close="handleClose">
       <el-form
-        :label-position="editorlabel"
         label-width="80px"
         :model="editorform"
       >
@@ -42,10 +13,10 @@
           <el-input v-model="editorform.ID"></el-input>
         </el-form-item>
         <el-form-item label="料仓全称">
-          <el-input v-model="editorform.CompanyID"></el-input>
+          <el-input v-model="editorform.Caption"></el-input>
         </el-form-item>
         <el-form-item label="原料名称">
-          <el-input v-model="editorform.Caption"></el-input>
+          <el-input v-model="editorform.MaterialName"></el-input>
         </el-form-item>
         <el-form-item label="最大容量">
           <el-input v-model="editorform.storeWeightUnit"></el-input>
@@ -94,19 +65,19 @@
         </el-table-column>
         <el-table-column prop="ID" label="料仓编号" width="">
         </el-table-column>
-        <el-table-column prop="CompanyID" label="料仓全称" width="">
+        <el-table-column prop="Caption" label="料仓全称" width="">
         </el-table-column>
-        <el-table-column prop="Caption" label="原料名称" width="">
+        <el-table-column prop="MaterialName" label="原料名称" width="">
         </el-table-column>
-        <el-table-column prop="storeWeightUnit" label="最大容量" width="">
+        <el-table-column prop="StoreWeightMax" label="最大容量" width="">
         </el-table-column>
-        <el-table-column prop="materialID" label="库存单位" width="">
+        <el-table-column prop="StoreWeightUnit" label="库存单位" width="">
         </el-table-column>
-        <el-table-column prop="TypeMaterialID" label="库存精确位" width="">
+        <el-table-column prop="StoreWeightPointNum" label="库存精确位" width="">
         </el-table-column>
-        <el-table-column prop="storeWeightPointNum" label="数字编号" width="">
+        <el-table-column prop="CommIDNum" label="数字编号" width="">
         </el-table-column>
-        <el-table-column prop="storeWeightMax" label="备注" width="">
+        <el-table-column prop="Remark" label="备注" width="">
         </el-table-column>
         <el-table-column fixed="right" label="操作" width="150px">
           <template slot-scope="scope">
@@ -138,7 +109,6 @@
       <el-pagination
         @size-change="handleSizeChange"
         @current-change="handleCurrentChange"
-        :current-page="currentPage4"
         :page-sizes="[10, 20]"
         :page-size="size"
         layout="total, sizes, prev, pager, next, jumper"
@@ -165,7 +135,7 @@ export default {
       },
       editorform: {
         ID:'',
-        CompanyID:'',
+        MaterialName:'',
         Caption:'',
         storeWeightUnit:'',
         materialID:'',
@@ -197,7 +167,7 @@ export default {
       querylistlcxx({
         page: this.page,
         intPageSize: this.size,
-        Comid:localStorage.getItem('comid')
+        Comid:localStorage.getItem('comid'),
       })
         .then((response) => {
           this.tableData = response.data.data;
@@ -253,8 +223,9 @@ export default {
       modifylcxx(
         JSON.stringify({
           ID: this.editorform.ID,
-          CompanyID: this.editorform.CompanyID,
+          CompanyID: localStorage.getItem('comid'),
           Caption: this.editorform.Caption,
+          MaterialName:this.editorform.MaterialName,
           storeWeightUnit: this.editorform.storeWeightUnit,
           materialID: this.editorform.materialID,
           TypeMaterialID: this.editorform.TypeMaterialID,

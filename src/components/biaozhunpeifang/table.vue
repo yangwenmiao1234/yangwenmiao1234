@@ -3,37 +3,6 @@
 修改表头背景颜色
   -->
 <div>
-  <el-dialog title="详情" v-dialogDrag :visible.sync="viewdialog"  :before-close="handleClose">
-    <el-form :label-position="viewlabel" label-width="80px" :model="viewform">
-  <el-form-item label="公司编号">
-    <el-input v-model="viewform.idname"></el-input>
-  </el-form-item>
-  <el-form-item label="公司全称">
-    <el-input v-model="viewform.name"></el-input>
-  </el-form-item>
-  <el-form-item label="公司简介">
-    <el-input v-model="viewform.profile"></el-input>
-  </el-form-item>
-    <el-form-item label="法定代表">
-    <el-input v-model="viewform.legal"></el-input>
-  </el-form-item>
-    <el-form-item label="公司电话">
-    <el-input v-model="viewform.phone"></el-input>
-  </el-form-item>
-    <el-form-item label="公司传真">
-    <el-input v-model="viewform.fax"></el-input>
-  </el-form-item>
-    <el-form-item label="公司地址">
-    <el-input v-model="viewform.addres"></el-input>
-  </el-form-item>
-    <el-form-item label="接口编码">
-    <el-input v-model="viewform.code"></el-input>
-  </el-form-item>
-    <el-form-item label="备注">
-    <el-input v-model="viewform.note"></el-input>
-  </el-form-item>
-</el-form>
-  </el-dialog>
   <el-dialog title="编辑" v-dialogDrag :visible.sync="editordialog"  :before-close="handleClose">
     <el-form :label-position="editorlabel" label-width="80px" :model="editorform">
   <el-form-item label="公司编号">
@@ -78,25 +47,25 @@
             {{ scope.$index + 1 }}
           </template>
         </el-table-column>
-        <el-table-column prop="idname" label="配方名称" width="">
+        <el-table-column prop="Caption" label="配方名称" width="">
         </el-table-column>
-        <el-table-column prop="grade" label="强度等级" width="">
+        <el-table-column prop="TypePowerGrade" label="强度等级" width="">
         </el-table-column>
-        <el-table-column prop="time" label="搅拌时间" width="">
+        <el-table-column prop="TypeProduct" label="搅拌时间" width="">
         </el-table-column>
-        <el-table-column prop="type" label="商品类型" width="">
+        <el-table-column prop="TypeProduct" label="商品类型" width="">
         </el-table-column>
-        <el-table-column prop="Permeability" label="抗渗等级" width="">
+        <el-table-column prop="TypeSeepGrade" label="抗渗等级" width="">
         </el-table-column>
-        <el-table-column prop="slump" label="坍落度" width="">
+        <el-table-column prop="TypeSlump" label="坍落度" width="">
         </el-table-column>
-        <el-table-column prop="size" label="砂粒径" width="">
+        <el-table-column prop="TypeSandSize" label="砂粒径" width="">
         </el-table-column>
-        <el-table-column prop="sewage" label="污水比例" width="">
+        <el-table-column prop="SerialNum" label="污水比例" width="">
         </el-table-column>
-        <el-table-column prop="code" label="接口编码" width="">
+        <el-table-column prop="InterfaceID" label="接口编码" width="">
         </el-table-column>
-        <el-table-column prop="note" label="备注" width=""> </el-table-column>
+        <el-table-column prop="Remark" label="备注" width=""> </el-table-column>
         <el-table-column fixed="right" label="操作" width="100">
           <template slot-scope="scope">
             <el-button
@@ -114,6 +83,18 @@
         </el-table-column>
       </el-table>
 </div>
+<div class="block">
+      <el-pagination
+        @size-change="handleSizeChange"
+        @current-change="handleCurrentChange"
+        :current-page="currentPage4"
+        :page-sizes="[10, 20]"
+        :page-size="size"
+        layout="total, sizes, prev, pager, next, jumper"
+        :total="total"
+      >
+      </el-pagination>
+    </div>
   </div>
 </template>
 
@@ -121,17 +102,6 @@
 export default {
     data() {
     return {
-        viewform: {
-       idname: "",
-          name: "",
-          profile: "",
-          legal: "",
-          phone: "",
-          fax: "",
-          addres: "",
-          code: "",
-          note: "",
-        },
         editorform:{
           idname: "",
           name: "",
@@ -145,59 +115,44 @@ export default {
         },
       tableData: [
         {
-          idname: "1",
-          grade:'1',
-          time:'1',
-          type:'1',
-          Permeability:'1',
-          slump:'123',
-          size:'123',
-          sewage:'213',
-          code: "1",
-          note: "1",
-        },
-        {
-          idname: "1",
-          grade:'1',
-          time:'1',
-          type:'1',
-          Permeability:'1',
-          slump:'123',
-          size:'123',
-          sewage:'213',
-          code: "1",
-          note: "1",
-        },
-        {
-          idname: "1",
-          grade:'1',
-          time:'1',
-          type:'1',
-          Permeability:'1',
-          slump:'123',
-          size:'123',
-          sewage:'213',
-          code: "1",
-          note: "1",
-        },
-        {
-          idname: "1",
-          grade:'1',
-          time:'1',
-          type:'1',
-          Permeability:'1',
-          slump:'123',
-          size:'123',
-          sewage:'213',
-          code: "1",
-          note: "1",
-        },
+        }
       ],
-      viewdialog: false,
       editordialog:false,
     };
   },
   methods: {
+    handleSizeChange(val) {
+      console.log(val);
+      this.size = val;
+      this.querylist();
+    },
+    handleCurrentChange(val) {
+      console.log(`当前页: ${val}`);
+      this.page = val;
+      this.querylist();
+    },
+    querylist() {
+      this.loading = true;
+      shiyanshi({
+        page: this.page,
+        intPageSize: this.size,
+        Comid:localStorage.getItem('comid')
+      })
+        .then((response) => {
+          this.tableData = response.data.data;
+          this.page = response.data.page;
+          this.size = response.data.PageSize;
+          this.total = response.data.dataCount;
+          this.loading = false;
+        })
+        .catch((error) => {
+          this.loading = true;
+          this.$message({
+            type: "info",
+            message: "查询失败，请联系管理员！",
+          });
+        });
+    },
     editorClick(row){
     this.editorform.idname = row.idname
      this.editorform.name = row.name
@@ -209,34 +164,23 @@ export default {
            this.editorform.code = row.code
            this.editorform.note = row.note
     },
-    handleClick(row) {
-       this.viewform.idname = row.idname
-     this.viewform.name = row.name
-      this.viewform.profile = row.profile
-       this.viewform.legal = row.legal
-        this.viewform.phone = row.phone
-         this.viewform.fax = row.fax
-          this.viewform.addres = row.addres
-           this.viewform.code = row.code
-           this.viewform.note = row.note
-      // console.log(row)
-    },
     headClass() {
       return "text-align:center";
     },
     rowClass() {
       return "text-align:center";
     },
-           handleClose(done) {
+    handleClose(done) {
         this.$confirm('确认关闭？')
           .then(_ => {
             done();
           })
           .catch(_ => {});
-      }
+    }
   },
-  mounted: {
+  mounted(){
     // 打开页面就执行的方法
+    this.querylist()
   },
 };
 </script>

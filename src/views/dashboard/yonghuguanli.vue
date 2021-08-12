@@ -6,18 +6,19 @@
         description="新建用户，添加用户基本信息。"
       ></el-step>
       <div class="body-1">
-        <el-form :inline="true" :model="addform" class="demo-form-inline">
-          <el-form-item label="用户名:">
+        <el-form :inline="true" :rules="formRules" :model="addform" class="demo-form-inline">
+          <el-form-item prop="name" label="用户名:" :rules="[{required: true, trigger: 'blur', message: '用户名不能为空'}]" >
             <el-input
-              v-model="addform.ID"
+              v-model="addform.name"
               placeholder="请输入用户名"
+              v-on:input="input"
             ></el-input>
           </el-form-item>
-          <el-form-item label="密码:">
-            <el-input v-model="addform.com" placeholder="请输入密码"></el-input>
+          <el-form-item prop="pass" label="密码:" :rules="[{required: true, trigger: 'blur', message: '密码不能为空'},{ min: 6, message: '长度不得小于六位', trigger: 'blur' }]">
+            <el-input v-on:input="input" v-model="addform.pass" placeholder="请输入密码"></el-input>
           </el-form-item>
-          <el-form-item label="部门:">
-            <el-select v-model="addform.region" placeholder="请选择部门">
+          <el-form-item prop="region" label="部门:" :rules="[{required: true, trigger: 'blur', message: '请选择部门'}]">
+            <el-select @change="input" v-model="addform.region" placeholder="请选择部门">
               <el-option label="财务部" value="caiwu"></el-option>
               <el-option label="技术部" value="jishu"></el-option>
             </el-select>
@@ -135,10 +136,7 @@
           >
           </el-tree>
         </div>
-      </div>
-      <el-step title="完成" description="创建用户成功，登录即可使用。">
-      </el-step>
-      <div class="body-3">
+        <div class="body-3">
         <el-button
             size="small"
             type="primary"
@@ -147,6 +145,9 @@
             >确定</el-button
           >
         </div>
+      </div>
+      <el-step title="完成" description="创建用户成功，登录即可使用。">
+      </el-step>  
     </el-steps>
     <div style="margin-top:3%">
       <el-table
@@ -193,17 +194,19 @@
   </div>
 </template>
 <script>
-import { asyncRoutes, constantRoutes } from '@/router'
 import { querymenu } from '@/api/menu.js'
 export default {
   data() {
     return {
+      formRules:{
+        // name:[{required: true, trigger: 'blur', message: '用户名不能为空'}]
+      },
       router:[],
       name:'example',
       active: 0,
       addform: {
         name: "",
-        ID: "",
+        pass: "",
         com: "",
         region: "",
         note: "",
@@ -460,17 +463,20 @@ export default {
     };
   },
   methods: {
-    quanbu(){
-      
-    },
-    ok1() {
-      this.active = 1;
-    },
-    ok2() {
-      this.active = 2;
+    input(){
+      if(this.addform.pass.length>=6){
+        if (this.addform.name!='' && this.addform.pass!='' && this.addform.region!='') {
+                this.active = 1;
+              }else{
+                this.active = 0;
+              }
+       }else{
+         this.active = 0;
+      }
     },
     ok3() {
-      this.$confirm('将成功创建用，确定吗？', '提示', {
+      if (this.addform.name!='' && this.addform.pass!='' && this.addform.region!='') {
+          this.$confirm('将成功创建用，确定吗？', '提示', {
           confirmButtonText: '确定',
           cancelButtonText: '取消',
           type: 'success'
@@ -481,34 +487,18 @@ export default {
           });
           this.active = 3;
         }).catch(() => {
+          this.active = 1;
           this.$message({
             type: 'info',
             message: '已取消创建'
           });          
         });
-        // console.log(constantRoutes)
-        this.routername=constantRoutes[3].children[0]
-        console.log(this.routername)
-    },
-    loadNode(node, resolve) {
-      if (node.level === 0) {
-        return resolve([{ name: "region" }]);
+      }else{
+        this.$message({
+            type: 'info',
+            message: '请先填写用户基本信息'
+          });   
       }
-      if (node.level > 1) return resolve([]);
-
-      setTimeout(() => {
-        const data = [
-          {
-            name: "leaf",
-            leaf: true,
-          },
-          {
-            name: "zone",
-          },
-        ];
-
-        resolve(data);
-      }, 500);
     },
       headClass() {
       return "text-align:center";
@@ -518,7 +508,6 @@ export default {
     },
   },
   mounted(){
-    this.quanbu()
   }
 };
 </script>
@@ -536,7 +525,8 @@ export default {
   width: 15%;
 }
 .body-3 {
-  margin-top: 1%;
+  margin-top: -3%;
+  margin-left: 3%;
 }
 /* .body-2-tree{
     height: 30px;

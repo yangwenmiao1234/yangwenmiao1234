@@ -1,6 +1,6 @@
 import Vue from 'vue'
 import Router from 'vue-router'
-import navData2 from "@/utils/navData.js"
+import navData2 from '@/utils/navData.js'
 
 Vue.use(Router)
 
@@ -35,9 +35,23 @@ export const constantRoutes = [
         component: () => import('@/views/bangzhu/shiyong/index'),
         meta: { title: '使用说明', icon: 'form' }
       },
+      {
+        path: '/guanyu',
+        name: 'Guanyu',
+        hidden: true,
+        component: () => import('@/views/bangzhu/guanyu/index'),
+        meta: { title: '关于', icon: 'form' }
+      },
+      {
+        path: '/yuancheng',
+        name: 'Yuancheng',
+        hidden: true,
+        component: () => import('@/views/bangzhu/yuancheng/index'),
+        meta: { title: '远程协助', icon: 'form' }
+      }
     ]
   },
-  // { 
+  // {
   //   path: '/',
   //   component: Layout,
   //   redirect: '/dashboard',
@@ -52,43 +66,43 @@ export const constantRoutes = [
   { path: '*', redirect: '/404', hidden: true }
 ]
 
-export const asyncRoutes = [
-  
-]
+export const asyncRoutes = []
 // console.log(navData)
-navData2.forEach(item=>{
-    constantRoutes.push({
-      path: item.path,
-      component: Layout,
-      redirect: item.redirect,
-      meta: { title: (item.meta == undefined ? item.children[0].meta.title : item.meta.title), icon: item.meta == undefined ? item.children[0].meta.icon : item.meta.icon }
-      // meta: { title: item.meta.title, icon: item.meta.icon }
-      ,
-       children: getChilder(item.children)
-    })
+navData2.forEach(item => {
+  constantRoutes.push({
+    path: item.path,
+    component: Layout,
+    redirect: item.redirect,
+    meta: {
+      title:
+        item.meta === undefined ? item.children[0].meta.title : item.meta.title,
+      icon: item.meta === undefined ? item.children[0].meta.icon : item.meta.icon
+    },
+    // meta: { title: item.meta.title, icon: item.meta.icon }
+    children: getChilder(item.children)
   })
+})
 
 export function getChilder(dd) {
   var ss = '0'
-  localStorage.setItem('ss' , ss)
-  var routers = [];
-   dd.forEach(item => {
-     routers.push({
+  localStorage.setItem('ss', ss)
+  var routers = []
+  dd.forEach(item => {
+    routers.push({
       path: item.path,
       name: item.name,
       component: item.component,
       meta: { title: item.meta.title, icon: item.meta.icon }
     })
   })
-  return routers;
+  return routers
 }
 
-
-
-const createRouter = () => new Router({
-  scrollBehavior: () => ({ y: 0 }),
-  routes: constantRoutes
-})
+const createRouter = () =>
+  new Router({
+    scrollBehavior: () => ({ y: 0 }),
+    routes: constantRoutes
+  })
 
 const router = createRouter()
 
@@ -96,6 +110,5 @@ export function resetRouter() {
   const newRouter = createRouter()
   router.matcher = newRouter.matcher // reset router
 }
-
 
 export default router

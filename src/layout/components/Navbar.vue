@@ -7,7 +7,16 @@
     
     <div class="right-menu" style="display:flex">
       <div>
-          <el-button @click="bangzhu()" class="body_button_1" type="primary" plain>帮助</el-button>
+        <el-dropdown>
+        <span class="el-dropdown-link">
+          帮助<i class="el-icon-arrow-down el-icon--right"></i>
+        </span>
+        <el-dropdown-menu slot="dropdown">
+          <el-dropdown-item><span @click="bangzhu0()">使用说明</span></el-dropdown-item>
+          <el-dropdown-item><span @click="bangzhu1()">远程协助</span></el-dropdown-item>
+          <el-dropdown-item><span @click="bangzhu2()">关于</span></el-dropdown-item>
+        </el-dropdown-menu>
+      </el-dropdown>
         </div>
       <el-dropdown class="avatar-container" trigger="click">
         <div class="avatar-wrapper">
@@ -44,7 +53,9 @@ import Hamburger from '@/components/Hamburger'
 export default {
   data(){
     return{
-      aa:'/bangzhu/shiyong'
+      aa:'/bangzhu/shiyong',
+      bb:'/bangzhu/yuancheng',
+      cc:'/bangzhu/guanyu',
     }
   },
   components: {
@@ -59,9 +70,14 @@ export default {
   },
   methods: {
     // 帮助
-    bangzhu(){
-      var ss = this.aa
+    bangzhu0(){
       this.$router.push({name:'Shiyong'})
+    },
+    bangzhu1(){
+      this.$router.push({name:'Yuancheng'})
+    },
+    bangzhu2(){
+      this.$router.push({name:'Guanyu'})
     },
     toggleSideBar() {
       this.$store.dispatch('app/toggleSideBar')
