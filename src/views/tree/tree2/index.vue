@@ -18,7 +18,9 @@
             @click="add2()"
             >增加次类型</el-button
           >
-          <!-- :accordion="true" 设置只展开一个同级节点 -->
+          <!-- :accordion="true" 设置只展开一个同级节点 
+            注释掉的
+            check-on-click-node="true"-->
           <el-tree
           style="margin-top:3%"
           :check-strictly="true"
@@ -27,7 +29,6 @@
             node-key="id"
             ref="tree"
             highlight-current
-            check-on-click-node="true"
             :default-checked-keys="[1]"
             :props="defaultProps"
           > 

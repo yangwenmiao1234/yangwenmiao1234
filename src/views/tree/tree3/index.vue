@@ -31,17 +31,18 @@
         <el-col :xl="24" style="display: flex">
           <div class="grid_content">
             <el-divider content-position="left">生产线配置</el-divider>
+              <!-- :check-strictly="true" 
+              check-on-click-node="true"-->
             <el-tree
               style="margin-top: 3%"
-              :check-strictly="true"
               :data="datatree"
               default-expand-all
               node-key="id"
               ref="tree"
               highlight-current
-              check-on-click-node="true"
               :default-checked-keys="[1]"
               :props="defaultProps"
+              :check-on-click-node="true"
               @check-change="handleCheckChange"
             >
             </el-tree>
@@ -149,7 +150,6 @@ export default {
         IsCheck:"",
       },
       // IsCheck:[1],//v_model取此值，没有默认0值使回显报错
-      check : [],
       checklist : [],
     };
   },
@@ -183,8 +183,7 @@ export default {
         }).then((response)=>{
           this.checklist=[]
           this.hardwareListData = response.data.value
-          this.check = response.data.value
-          this.check.forEach(item=>{
+          this.hardwareListData.forEach(item=>{
             if(item.IsCheck==true){
               this.checklist.push(item.StoreCaption)
             }
@@ -256,9 +255,6 @@ export default {
       console.log(this.checkedData);
     },
   },
-    created() {
-        getHardwareListData();
-    },
   mounted() {
     // this.shuxingjiego();
     this.queryselect()

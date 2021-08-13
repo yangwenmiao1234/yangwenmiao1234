@@ -5,7 +5,6 @@
   <div class="body">
     <el-dialog v-dialogDrag title="编辑" :visible.sync="editordialog">
       <el-form
-        :label-position="editorlabel"
         label-width="80px"
         :model="editorform"
       >
@@ -85,7 +84,6 @@
       <el-pagination
         @size-change="handleSizeChange"
         @current-change="handleCurrentChange"
-        :current-page="currentPage4"
         :page-sizes="[10, 20]"
         :page-size="size"
         layout="total, sizes, prev, pager, next, jumper"
@@ -293,7 +291,7 @@ export default {
         });
     },
   },
-  mounted: {
+  mounted(){
     // 打开页面就执行的方法
   },
 };

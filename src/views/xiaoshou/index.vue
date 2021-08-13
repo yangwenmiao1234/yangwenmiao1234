@@ -39,7 +39,6 @@
             :visible.sync="adddialog_1"
             width="30%">
              <el-form
-          :label-position="editorlabel"
           label-width="80px"
           :model="addform"
         >
@@ -68,7 +67,6 @@
             :visible.sync="modifydialog_1"
             width="30%">
              <el-form
-          :label-position="editorlabel"
           label-width="80px"
           :model="addform"
         >
@@ -141,10 +139,8 @@
             title="添加"
             :visible.sync="adddialog"
             width="55%"
-            :before-close="handleClose"
           >
             <el-form
-              :label-position="editorlabel"
               label-width="80px"
               :model="addform"
             >
@@ -244,6 +240,7 @@ export default {
   components : { Xsd },
   data() {
     return {
+      tableData:[{}],
       gonhuotime:'',
       loading:false,
       checked1:true,
@@ -285,6 +282,7 @@ export default {
           value: '选项5',
           label: '北京烤鸭'
         }],
+        value:'',
         TaskSource: '',
         modifydialog_1:false,
       adddialog_1:false,

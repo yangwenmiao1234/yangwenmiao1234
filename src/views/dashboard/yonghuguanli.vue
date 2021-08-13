@@ -1,5 +1,7 @@
 <template>
   <div class="body">
+    <el-button @click="querymenu()">
+    </el-button>
     <el-steps direction="vertical" :active="active" finish-status="success">
       <el-step
         title="新建用户"
@@ -506,6 +508,11 @@ export default {
     rowClass() {
       return "text-align:center";
     },
+    querymenu(){
+      querymenu({
+        
+      })
+    }
   },
   mounted(){
   }

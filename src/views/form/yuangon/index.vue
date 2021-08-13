@@ -35,7 +35,7 @@
               @click=" query_1()"
               >搜索</el-button
             >
-            <el-button icon="el-icon-refresh" size="mini" @click="resetQuery"
+            <el-button icon="el-icon-refresh" size="mini"
               >重置</el-button
             >
              <el-button
@@ -98,7 +98,6 @@
       <el-dialog
         :title="title"
         :visible.sync="open"
-        :before-close="handleClose"
         v-dialogDrag
         width="40%"
       >
