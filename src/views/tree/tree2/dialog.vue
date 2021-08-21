@@ -1,10 +1,6 @@
 <template>
-  <!--  :header-cell-style="{background:'rgb(0 0 0 / 67%)',color:'#606266'}"
-修改表头背景颜色
-  -->
-  <div style="width:100%">
-    <div>
-      <el-dialog
+  <div class="body">
+    <el-dialog
       v-dialogDrag
         :title="title"
         :visible.sync="maindialog"
@@ -20,7 +16,7 @@
               >
                 <div style="display:flex">
                   <div class="" style="">
-                  <el-form-item  label="料仓全称">
+                  <el-form-item  label="料仓全称" prop="Caption" :rules="[{required: true, trigger: 'blur', message: '请输入料仓全称'}]">
                     <el-input class="body_dialog_input" v-model="mainfrom.Caption"></el-input>
                   </el-form-item>
                   <el-form-item label="数字编号">
@@ -52,13 +48,13 @@
                     </el-option>
                   </el-select>
                   </el-form-item>
-                  <el-form-item style="margin-top:0%" label="最大容重">
+                  <el-form-item style="margin-top:0%" label="最大容重" prop="storeWeightMax" :rules="[{required: true, trigger: 'blur', message: '请输入最大容重'}]">
                     <el-input class="body_dialog_input"  v-model="mainfrom.storeWeightMax"></el-input>
                   </el-form-item>
                   <el-form-item label="料仓体积">
                     <el-input class="body_dialog_input" v-model="mainfrom.storeVolumeMax"></el-input>
                   </el-form-item>
-                  <el-form-item label="库存单位">
+                  <el-form-item label="库存单位" prop="storeWeightUnit" :rules="[{required: true, trigger: 'blur', message: '请选择库存单位'}]">
                     <el-select v-model="storeWeightUnit" filterable placeholder="请选择">
                     <el-option
                       v-for="item in options3"
@@ -68,7 +64,7 @@
                     </el-option>
                   </el-select>
                   </el-form-item>
-                  <el-form-item label="库存精确位">
+                  <el-form-item label="库存精确位" prop="storeWeightPointNum" :rules="[{required: true, trigger: 'blur', message: '请输入库存精确位'}]">
                     <el-input class="body_dialog_input" v-model="mainfrom.storeWeightPointNum"></el-input>
                   </el-form-item>
                   <el-form-item label="低位报警值">
@@ -125,86 +121,30 @@
             </el-tab-pane>
           </el-tabs>
           <el-button icon="el-icon-circle-close" style="margin-top: 5%" @click="maindialog = false,addfalse()"
-           plain >取 消</el-button
+            >取 消</el-button
           >
-          <el-button icon="el-icon-circle-check" type="primary" @click="maindialog = false,modify()"
-            plain>确 定</el-button
+          <el-button icon="el-icon-circle-check" type="primary" @click="maindialog = false,add()"
+            >确 定</el-button
           >
         </span>
       </el-dialog>
-    </div>
-    <div class="table" style="width:100%">
-      <el-table
-      v-loading="loading"
-        :header-cell-style="{  background: 'rgba(249, 182, 3, 0.67)', color: '#606266' }"
-        :data="tableData"
-        border
-        :cell-style="rowClass"
-        style="width:100%"
-      >
-        <el-table-column fixed="left" label="序号" width="50px">
-          <template slot-scope="scope">
-            {{ scope.$index + 1 }}
-          </template>
-        </el-table-column>
-        <el-table-column prop="ID" label="料仓编号" width="">
-        </el-table-column>
-        <el-table-column prop="Caption" label="料仓全称" width="">
-        </el-table-column>
-        <el-table-column prop="MaterialName" label="原料名称" width="">
-        </el-table-column>
-        <el-table-column prop="StoreWeightMax" label="最大容量" width="">
-        </el-table-column>
-        <el-table-column prop="StoreWeightUnit" label="库存单位" width="">
-        </el-table-column>
-        <el-table-column prop="StoreWeightPointNum" label="库存精确位" width="">
-        </el-table-column>
-        <el-table-column prop="CommIDNum" label="数字编号" width="">
-        </el-table-column>
-        <el-table-column prop="Remark" label="备注" width="">
-        </el-table-column>
-        <el-table-column fixed="right" label="操作" width="150px">
-          <template slot-scope="scope">
-            <el-button
-            icon="el-icon-edit"
-              type="text"
-              size="small"
-              @click="editorClick(scope.row), (maindialog = true)"
-              >编辑</el-button
-            >
-            <el-button
-            icon="el-icon-delete"
-              type="text"
-              size="small"
-              @click="deletes(scope.row)"
-              >删除</el-button
-            >
-          </template>
-        </el-table-column>
-      </el-table>
-       <div class="block">
-      <el-pagination
-        @size-change="handleSizeChange"
-        @current-change="handleCurrentChange"
-        :page-sizes="[10, 20]"
-        :page-size="size"
-        layout="total, sizes, prev, pager, next, jumper"
-        :total="total"
-      >
-      </el-pagination>
+      <div v-show="false" class="table">
+      <Lcxx ref="liaocangxinxi"> </Lcxx>
     </div>
     </div>
-  </div>
 </template>
-
 <script>
-
-import {querylistlcxx , deleteslcxx , modifylcxx}  from '@/api/user.js'
+import {addlcxx , querylistlcxx , querylistylxx} from '@/api/user.js'
+import {querylisttree , addtree1 , addtree2 , modifytree1 , modifytree2 ,deletetree1 , deletetree2} from '@/api/tree.js'
+import Lcxx from "@/components/table/liaocangxinxi.vue";
 export default {
+  components: { Lcxx },
+  //   components: {  },
   data() {
     return {
-      maindialog:false,
       title:'',
+      companyID:"HGMES",
+      comid:"HGMES",
       mainfrom: {
         Caption : "",
         commIDNum: "",
@@ -229,6 +169,39 @@ export default {
         stateFlagAlarmMin: "",
         commIDAddress: "",
       },
+      maindialog: false,
+      activeName: "first",
+      options: [
+        {
+          value: '',
+          title:'',
+          label:''
+        }
+      ],
+      // 后端返回value都为1所以选择为默认最后一个选项
+      value: "",
+      // id:'',
+      data: [
+        {
+          value: '',
+          title: "",
+          label:'',
+          children: [
+            {
+              value: '',
+              title: "",
+              label:'',
+            }
+          ],
+        }
+      ],
+      defaultProps: {
+        children: "children",
+        label: "title",
+      },
+      selectOrg: {
+        orgsid: []
+      },
        options2: [{
           ID:'',
           Caption:'',
@@ -249,91 +222,50 @@ export default {
           label: '袋',
         }],
         storeWeightUnit: '',
-      total: 0,
-      loading: false,
-      page: 1,
-      size: 10,
-      tableData: [
-        {
-          ID: "",
-          CompanyID: "",
-          Caption: "",
-          TypeMaterialID: "",
-          MaterialID: "",
-          storeWeightUnit: "",
-          storeWeightPointNum: "",
-          storeWeightMax: "",
-        }
-      ],
-      viewdialog: false,
-      editordialog: false,
-      activeName:"first",
+      arr:[]
     };
   },
   methods: {
-     querylist() {
-      this.loading = true;
-      // console.log(document.getElementById("#123 #1234"))
-      let self = this;
+    querylist(){
+      const aa = this.$refs.liaocangxinxi
       querylistlcxx({
         Typematerialid : localStorage.getItem('Typematerialid'),
-        page: this.page,
-        intPageSize: this.size,
+        page: aa.page,
+        intPageSize: aa.size,
         Comid:localStorage.getItem('comid'),
-        
-      })
-        .then((response) => {
-          this.tableData = response.data.data;
-          this.page = response.data.page;
-          this.size = response.data.PageSize;
-          this.total = response.data.dataCount;
-          this.loading = false;
+      }) .then((response) => {
+          aa.tableData = response.data.data;
+          aa.page = response.data.page;
+          aa.size = response.data.PageSize;
+          aa.total = response.data.dataCount;
+          aa.loading = false;
         })
         .catch((error) => {
-          this.loading = true;
+          aa.loading = true;
           this.$message({
             type: "info",
             message: "查询失败，请联系管理员！",
           });
         });
     },
-     deletes(row) {
-      // debugger;
-      this.$confirm("此操作将永久删除该数据, 是否继续?", "提示", {
-        confirmButtonText: "确定",
-        cancelButtonText: "取消",
-        type: "warning",
-      })
-        .then(() => {
-          deleteslcxx({
-            id: row.ID,
-          })
-            .then((response) => {
-              // alert("1  ")
-              this.$message({
-                message: "删除成功",
-                type: "success",
-              });
-              this.querylist();
-              // const gonsixinxi=this.$refs.gonsixinxi
-              // gonsixinxi.querylist()
-            })
-            .catch((error) => {
-              this.$message({
-                message: "删除未成功，请联系管理员",
-                type: "error",
-              });
-            });
+    shuxingjiego() {
+        querylisttree({
+        Comid:localStorage.getItem('comid')
+        }).then(response=>{
+         this.data=response.data
+         this.options=response.data
+        }).catch((error)=>{
+          alert('获取失败')
         })
-        .catch((error) => {
-          this.$message({
-            type: "info",
-            message: "已取消删除",
-          });
-        });
     },
-    modify() {
-      modifylcxx({
+    addmaindialog(){
+        this.title = '增加'
+        this.maindialog = true
+    },
+    add() {
+      const aa = this.$refs.liaocangxinxi
+      // alert("增加方法还在实现");
+        addlcxx({
         Caption : this.mainfrom.Caption,
         CommIDNum : this.mainfrom.commIDNum,
         OrderIndex : this.mainfrom.orderIndex,
@@ -359,66 +291,33 @@ export default {
         StoreWeightUnit : this.storeWeightUnit,
         TypeMaterialID : localStorage.getItem('TypeMaterialID')
       }).then((response) => {
-          this.$message({
-            type: "success",
-            message: "修改成功!",
-          });
-          console.log(response);
-          this.querylist();
-        })
-        .catch((error) => {
-          this.$message({
-            type: "error",
-            message: "修改未成功，请联系管理员",
-          });
+        this.$message({
+          message: "添加成功！",
+          type: "success",
         });
+        this.querylist();
+        this.addfalse()
+        localStorage.removeItem('TypeMaterialID')
+      })
+      .catch((error) => {
+        this.$message({
+          message: "添加未成功，请联系管理员",
+          type: "error",
+        });
+      });
     },
-    editorClick(row) {
-        this.mainfrom.Caption = row.Caption,
-        this.mainfrom.commIDNum = row.CommIDNum,
-        this.mainfrom.orderIndex = row.OrderIndex,
-        this.mainfrom.interfaceID = row.InterfaceID,
-        this.mainfrom.remark = row.Remark,
-        this.mainfrom.alarmHeightMax = row.AlarmHeightMax,
-        this.materialName = row.MaterialName,
-        this.mainfrom.storeWeightMax = row.StoreWeightMax,
-        this.mainfrom.storeVolumeMax = row.StoreVolumeMax,
-        this.mainfrom.storeWeightPointNum = row.StoreWeightPointNum,
-        this.mainfrom.alarmHeightMin = row.AlarmHeightMin,
-        this.Radarfrom.storeZJ = row.StoreZJ,
-        this.Radarfrom.heightTop = row.HeightTop,
-        this.Radarfrom.heightBottom = row.HeightBottom,
-        this.Radarfrom.radarLineLength = row.RadarLineLength,
-        this.Radarfrom.radarDeadzone = row.RadarDeadzone,
-        this.Radarfrom.alarmHeightMax = row.AlarmHeightMax,
-        this.Radarfrom.alarmHeightMin = row.AlarmHeightMin,
-        // StateFlagAlarmMax : this.Radarfrom.stateFlagAlarmMax,
-        // StateFlagAlarmMin : this.Radarfrom.stateFlagAlarmMin,
-        this.Radarfrom.commIDAddress = row.CommIDAddress,
-        this.storeWeightUnit = row.StoreWeightUnit
+    get() {
+      alert("获取方法还未实现，敬请期待");
     },
-    headClass() {
-      return "text-align:center";
-    },
-    rowClass() {
-      return "text-align:center";
+    update() {
+      alert("更新方法还未实现，敬请期待");
     },
     handleClose(done) {
-      this.$confirm("确认关闭？")
-        .then((_) => {
-          done();
-        })
-        .catch((_) => {});
-    },
-     handleSizeChange(val) {
-      console.log(val);
-      this.size = val;
-      this.querylist();
-    },
-    handleCurrentChange(val) {
-      console.log(`当前页: ${val}`);
-      this.page = val;
-      this.querylist();
+        this.$confirm('确认关闭？')
+          .then(_ => {
+            done();
+          })
+          .catch(_ => {});
     },
     addfalse(){
       this.mainfrom.companyID=""
@@ -445,36 +344,54 @@ export default {
       this.Radarfrom.commIDAddress=""
       this.Radarfrom.id=""
     },
+    queryselect(){
+      querylistylxx({
+         page: this.page,
+         intPageSize: this.size,
+         Comid:localStorage.getItem('comid'),
+      }).then((response)=>{
+        this.options2 = response.data.data
+        console.log(response.data.data)
+      })
+    },
   },
   mounted(){
-    // 打开页面就执行的方法
-    this.querylist()
-  },
+    this.queryselect()
+    this.shuxingjiego()
+  }
 };
 </script>
-
-<style>
-.el-table {
-  color: #606266;
+<style scoped>
+.table {
+  margin-top: 2%;
 }
-.el-table th {
-  text-align: center;
-}
-/* ::-webkit-scrollbar {
-  height: 18px;
+/* /deep/.el-input__inner {
+  background-color: #f7f0dcab;
+  border-color: rgb(0 0 0 / 67%);
 } */
-::-webkit-scrollbar-thumb {
-  -webkit-box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.2);
-  background: rgba(249, 182, 3, 0.67);
+/* .el-button + .el-button {
+  background-color: orange;
+  border-color: rgb(0 0 0 / 67%);
+} */
+/* /deep/.el-checkbox__input.is-checked .el-checkbox__inner,
+.el-checkbox__input.is-indeterminate .el-checkbox__inner {
+  background-color: orange;
+  border-color: rgb(0 0 0 / 67%);
+} */
+/deep/.el-form-item__label {
+  width: 82px;
 }
-::-webkit-scrollbar-track {
-  -webkit-box-shadow: 0;
-  border-radius: 0;
-  background: #e2b94862;
-}
-.el-alert_content{
-  display: table-cell;
-  padding: 0 0.5rem;
-  width: 100%;
-}
+.custom-tree-node {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    font-size: 14px;
+    padding-right: 8px;
+  }
+  .body_dialog_input{
+  }
+  .body_dialog2{
+    margin-left: 5%;
+  }
 </style>

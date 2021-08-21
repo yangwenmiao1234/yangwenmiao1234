@@ -21,6 +21,20 @@ export const constantRoutes = [
     component: () => import('@/views/404'),
     hidden: true
   },
+  // {
+  //   path: '/',
+  //   component: Layout,
+  //   redirect: '/dashboard',
+  //   meta: { title: '用户管理', icon: 'dashboard' },
+  //   children: [
+  //     {
+  //       path: 'dashboard',
+  //       name: 'dashboard',
+  //       component: () => import('@/views/dashboard/yonghuguanli'),
+  //       meta: { title: '用户管理', icon: 'dashboard' }
+  //     }
+  //   ]
+  // },
   {
     path: '/bangzhu',
     component: Layout,
@@ -50,7 +64,7 @@ export const constantRoutes = [
         meta: { title: '远程协助', icon: 'form' }
       }
     ]
-  },
+  }
   // {
   //   path: '/',
   //   component: Layout,
@@ -63,7 +77,6 @@ export const constantRoutes = [
   //   }]
   // },
   // 404 page must be placed at the end !!!
-  { path: '*', redirect: '/404', hidden: true }
 ]
 
 export const asyncRoutes = []

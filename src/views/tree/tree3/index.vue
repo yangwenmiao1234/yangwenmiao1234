@@ -14,13 +14,10 @@
               >
               </el-option>
             </el-select>
-            <el-button style="margin-left:2%" type="primary" @click="queryselect()" plain
-              >查询生产线</el-button>
-            <el-button type="primary" plain
+            <el-button icon="el-icon-search" style="margin-left:2%" type="primary" @click="queryselect()" plain
+              >查询</el-button>
+            <el-button icon="el-icon-download" type="primary" plain
               >获取PCS仓名</el-button
-            >
-            <el-button type="primary" plain
-              >保存</el-button
             >
           </div>
         </el-col>
@@ -39,6 +36,7 @@
               default-expand-all
               node-key="id"
               ref="tree"
+              :expand-on-click-node="false"
               highlight-current
               :default-checked-keys="[1]"
               :props="defaultProps"
@@ -52,7 +50,7 @@
            <div style="width:50px">
              <el-form :model="ruleForm">
                <el-form-item label="" prop="equipment">
-              <el-checkbox-group  v-model="checklist">
+              <el-checkbox-group v-if="checkbox"  v-model="checklist">
             <el-checkbox
               v-for="item in hardwareListData"
               :key="item.StoreID"
@@ -61,25 +59,6 @@
           </el-checkbox-group>
         </el-form-item>
         </el-form>
-            <!-- <div
-              class="check-group"
-              v-for="(item, index) in equipments"
-              :key="index"
-            >
-              <el-radio-group
-                v-if="radio"
-                v-model="checkedEquipments[index]"
-                @change="handleChange(item.id)"
-              >
-                {{ checkedEquipments[index] }}
-                <el-radio
-                  v-for="data in item.childMenu"
-                  :label="data.id"
-                  :key="data.menu"
-                  >{{ data.menu }}
-                </el-radio>
-              </el-radio-group>
-            </div> -->
            </div>
           </div>
         </el-col>
@@ -127,22 +106,6 @@ export default {
       arr: [],
       checkbox: false,
       radio: false,
-      // checkedEquipments: [], //随意修改后的checked项（即要传到后台的变更数据）
-      // equipments: [
-      //       {
-      //       StoreID:'',
-      //       StoreIndex:"",
-      //       StoreCaption:"",
-      //       }
-      //   ],
-      // checkEquip: [
-      //   //模拟后台获取的数据（各el-checkbox-group默认checked项）
-      //   {
-      //     id: "1",
-      //     menu: "设备1",
-      //     childMenu: [],
-      //   },
-      // ],
       level:'',
       hardwareListData:[],//后台返回的多选项
       checkedData: [],//选择多选框时的选中值
@@ -151,6 +114,7 @@ export default {
       },
       // IsCheck:[1],//v_model取此值，没有默认0值使回显报错
       checklist : [],
+      a:'',
     };
   },
   methods: {
@@ -183,6 +147,7 @@ export default {
         }).then((response)=>{
           this.checklist=[]
           this.hardwareListData = response.data.value
+          // console.log(this.hardwareListData)
           this.hardwareListData.forEach(item=>{
             if(item.IsCheck==true){
               this.checklist.push(item.StoreCaption)
@@ -192,7 +157,7 @@ export default {
       } else {
         this.title = "PCS仓名";
         this.checkbox = false;
-        this.radio = true;
+        // this.radio = true;
       }
     },
     // handleChange() {
@@ -232,8 +197,7 @@ export default {
     handleChange:function(e,StoreID,StoreCaption) {
       // 父节点id
       // alert(this.arr.value)
-      console.log(e,StoreID,StoreCaption)
-      if(e){
+        if(e){
         this.checkedData.push(StoreID);
         this.level = '0'
         var productLineID = this.value
@@ -245,14 +209,24 @@ export default {
             companyID : localStorage.getItem('comid'),
             productLineID : this.value
         })).then((responss)=>{
-          alert('成功')
+          this.$message({
+            type:'success',
+            message:'成功'
+          })
+          this.a=1
+          this.selectline()
         }).catch((error)=>{
-          alert('失败')
+          this.$message({
+            type:'error',
+            message:'失败'
+          })
         })
-      }else{
-        this.delete(id);
-      }
-      console.log(this.checkedData);
+     }else{
+       this.$message({
+            type:'info',
+            message:'已取消'
+        })
+     }
     },
   },
   mounted() {

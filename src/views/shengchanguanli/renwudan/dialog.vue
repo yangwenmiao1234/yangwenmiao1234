@@ -205,6 +205,10 @@
             <el-button @click="adddialog = false">取 消</el-button>
             <el-button type="primary" @click="adddialog = false , add()">确 定</el-button>
           </span>
+          <Xsd v-show="false" ref="xiaoshoudan2">
+          </Xsd>
+          <Rwd v-show="false" ref="renwudan">
+          </Rwd>
     </el-dialog>
 </template>
 <script>
@@ -253,7 +257,7 @@ export default {
           value: '选项1',
           label: '黄金糕'
         },],
-        FormulaCaptionMortar: '',
+        TypePowerGradeMortar: '',
         options_2: [{
           value: '选项1',
           label: '黄金糕'
@@ -404,74 +408,7 @@ export default {
     };
   },
   methods: {
-    query() {
-      const ss = this.$refs.xiaoshoudan2;
-      ss.loading = true;
-      if(this.value2===''){
-          this.gonhuotime=""
-      }else if(this.value2==null){
-         this.gonhuotime = ""
-      }else{
-      let time = this.value2
-      let starttime = this.moment(time[0]).format("YYYY-MM-DD HH:mm:ss")
-      let endtime = this.moment(time[1]).format("YYYY-MM-DD HH:mm:ss")
-      this.gonhuotime = (starttime +','+ endtime)
-      }
-      querylistxsdgl({
-        page: ss.page,
-        intPageSize: ss.size,
-        ProName:this.goncheng.ProName,
-        Deliverydate:this.gonhuotime,
-        Comid:localStorage.getItem('comid')
-      })
-        .then((response) => {
-          ss.tableData = response.data.data;
-          ss.page = response.data.page;
-          ss.size = response.data.PageSize;
-          ss.total = response.data.dataCount;
-          this.$message({
-            type: "success",
-            message: "查询成功",
-          });
-          ss.loading = false;
-        })
-        .catch((error) => {
-          ss.loading = true;
-          this.$message({
-            type: "info",
-            message: "查询失败，请联系管理员！",
-          });
-        });
-    },
-    query2() {
-      const dd = this.$refs.renwudan;
-      dd.loading = true;
-      querylistrwd({
-        page: dd.page,
-        intPageSize: dd.size,
-         Comid:localStorage.getItem('comid')
-      })
-        .then((response) => {
-          dd.tableData = response.data.data;
-          dd.page = response.data.page;
-          dd.size = response.data.PageSize;
-          dd.total = response.data.dataCount;
-          this.$message({
-            type: "success",
-            message: "查询成功",
-          });
-          dd.loading = false;
-        })
-        .catch((error) => {
-          dd.loading = true;
-          this.$message({
-            type: "info",
-            message: "查询失败，请联系管理员！",
-          });
-        });
-    },
     add() {
-        alert('1')
       const aa = this.$refs.renwudan;
       addrwd(
         JSON.stringify({
@@ -513,8 +450,7 @@ export default {
             message: "添加成功！",
             type: "success",
           });
-          alert(localStorage.getItem('comid'))
-        //   this.query2();
+          aa.query2();
         })
         .catch((error) => {
           this.$message({
@@ -539,7 +475,6 @@ export default {
     }
   },
   mounted(){
-    this.query2()
   }
 };
 </script>

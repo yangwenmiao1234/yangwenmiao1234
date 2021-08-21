@@ -12,7 +12,6 @@
        :close-on-click-modal="false"
     >
       <el-form
-        :label-position="editorlabel"
         label-width="80px"
         :model="editorform"
       >
@@ -317,7 +316,6 @@
         <el-pagination
           @size-change="handleSizeChange"
           @current-change="handleCurrentChange"
-          :current-page="currentPage4"
           :page-sizes="[10, 20]"
           :page-size="size"
           layout="total, sizes, prev, pager, next, jumper"
@@ -415,7 +413,7 @@ export default {
           value: '选项1',
           label: '黄金糕'
         },],
-        FormulaCaptionMortar: '',
+        TypePowerGradeMortar: '',
         options_2: [{
           value: '选项1',
           label: '黄金糕'
@@ -492,6 +490,15 @@ export default {
     };
   },
   methods: {
+    handleSizeChange(val) {
+      this.size = val;
+      this.querylist();
+    },
+    handleCurrentChange(val) {
+      console.log(`当前页: ${val}`);
+      this.page = val;
+      this.querylist();
+    },
      querylist() {
       this.loading = true;
       querylistrwd({

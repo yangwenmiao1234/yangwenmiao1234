@@ -4,7 +4,7 @@
       <el-form ref="loginForm" :model="loginForm" :rules="loginRules" class="login-form" auto-complete="on" label-position="left">
 
       <div class="title-container">
-        <h3 class="title">惠工智科</h3>
+        <h3 class="title">智慧商砼</h3>
       </div>
 
       <el-form-item prop="username">
@@ -83,8 +83,8 @@ export default {
       route:[],
       data1:[],
       loginForm: {
-        username: 'admins',
-        password: 'admins'
+        username: '杨文淼',
+        password: '123456'
       },
       loginRules: {
         username: [{ required: true, trigger: 'blur', }],
@@ -119,8 +119,9 @@ handleLogin() {  //这个是登录点击事件
         if (valid) {
           this.loading = true
           this.$store.dispatch('user/login', this.loginForm).then(() => {
-            this.$router.push({ path: this.redirect || '/' })
-            this.loading = false
+          this.$router.push({ path: this.redirect || '/' })
+          // this.$router.push({name:'Shiyong'})
+          this.loading = false
           })
         } else {
           console.log('error submit!!')

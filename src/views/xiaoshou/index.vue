@@ -1,9 +1,9 @@
 <template>
   <div class="body">
         <div class="body-1" style="">
-            <el-radio v-model="radio" label="0">启动</el-radio>
-            <el-radio v-model="radio" label="1">暂停</el-radio>
-            <el-radio v-model="radio" label="2">完成</el-radio>
+            <el-radio @change="query()" v-model="radio" label="0">启动</el-radio>
+            <el-radio @change="query()" v-model="radio" label="1">暂停</el-radio>
+            <el-radio @change="query()" v-model="radio" label="2">完成</el-radio>
             <el-form :inline="true" class="body-form-1"  :model="goncheng">
               <el-form-item label="工程名称:">
                 <el-input class="body-form-input" v-model="goncheng.ProName" placeholder="工程名称"></el-input>

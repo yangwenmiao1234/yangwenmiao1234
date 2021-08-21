@@ -7,7 +7,8 @@
         <navbar />
       </div>
       <tags-view />    <!-- 此处增加tag-->
-      <app-main />
+      <app-main class="appmain" />
+      <span style="margin-left:45%;margin-top:3%">智慧商砼(加工商)</span>
     </div>
   </div>
 </template>
@@ -89,5 +90,8 @@ export default {
 
   .mobile .fixed-header {
     width: 100%;
+  }
+  .appmain{
+    height: 1200px;
   }
 </style>

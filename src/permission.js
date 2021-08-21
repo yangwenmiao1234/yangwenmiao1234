@@ -1,48 +1,16 @@
 import router from './router'
 import store from './store'
-import { ColorPicker, Message } from 'element-ui'
+import { Message } from 'element-ui' // ColorPicker,
 import NProgress from 'nprogress' // progress bar 进度条
 import 'nprogress/nprogress.css' // progress bar style 进度条样式
 import { getToken } from '@/utils/auth' // get token from cookie 从cookie中获取token
 import getPageTitle from '@/utils/get-page-title'
-// import asyncRoutes from '@/router/index.js'
-import navData2 from "@/utils/navData.js"  //引入路由假数据
-import Layout from '@/layout'  //引入组件
-// import { querymenu } from '@/api/menu.js'
 
 NProgress.configure({ showSpinner: false }) // NProgress Configuration NProgress配置
 
 const whiteList = ['/login'] // no redirect whitelist 没有重定向白名单
 
-var getRouter  //定义接受路由数组
-// 遍历路由假数据 获取需要的路由数据
-// navData2.forEach(item=>{
-//   getRouter.push({
-//       path: item.path,
-//       component: Layout,
-//       redirect: item.redirect,
-//       meta: { title: (item.meta == undefined ? item.children[0].meta.title : item.meta.title), icon: item.meta == undefined ? item.children[0].meta.icon : item.meta.icon }
-//       // meta: { title: item.meta.title, icon: item.meta.icon }
-//       ,
-//        children: getChilder(item.children)
-//     })
-//   }
-//   )
-
-// export function getChilder(dd) {
-//   var ss = '0'
-//   localStorage.setItem('ss' , ss)
-//   var routers = [];
-//    dd.forEach(item => {
-//      routers.push({
-//       path: item.path,
-//       name: item.name,
-//       component: item.component,
-//       meta: { title: item.meta.title, icon: item.meta.icon }
-//     })
-//   })
-//   return routers;
-// }
+// var getRouter
 
 router.beforeEach(async(to, from, next) => {
   // start progress bar
@@ -60,6 +28,7 @@ router.beforeEach(async(to, from, next) => {
       next({ path: '/' })
       NProgress.done()
     } else {
+      // const hasGetPermissionRoutes = store.getters.permission_routes && store.getters.permission_routes.length > 0
       const hasGetUserInfo = store.getters.name
       if (hasGetUserInfo) {
         next()
@@ -67,11 +36,18 @@ router.beforeEach(async(to, from, next) => {
         try {
           // get user info 获取用户信息
           await store.dispatch('user/getInfo')
+          // 如果获取到了姓名 那就说明已经登录成功了，就不用再添加
+          // // 动态获取路由
+          // const accessRoutes = await store.dispatch('user/generateRoutes')
           // // 动态添加路由
-          // router.addRoutes(getRouter)
+          // router.addRoutes(accessRoutes)
+          // // 动态添加路由404
+          // let lastRou = [ { path: '*', redirect: '/404', hidden: true }]
+          // router.addRoutes(lastRou)
+          // next({ ...to, replace: true }) // hack方法 确保addRoutes已完成
           next()
         } catch (error) {
-          // 移除令牌，到登录页面重新登录 
+          // 移除令牌，到登录页面重新登录
           // remove token and go to login page to re-login
           await store.dispatch('user/resetToken')
           Message.error(error || 'Has Error')
@@ -99,4 +75,3 @@ router.afterEach(() => {
   // finish progress bar 完成进度条
   NProgress.done()
 })
-

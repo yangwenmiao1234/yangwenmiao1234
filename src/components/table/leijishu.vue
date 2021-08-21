@@ -10,7 +10,6 @@
       :before-close="handleClose"
     >
       <el-form
-        :label-position="editorlabel"
         label-width="80px"
         :model="editorform"
       >
@@ -171,7 +170,7 @@ export default {
         .catch((_) => {});
     },
   },
-  mounted: {
+  mounted(){
     // 打开页面就执行的方法
   },
 };

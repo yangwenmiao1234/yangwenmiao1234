@@ -17,8 +17,7 @@ import App from './App'
 import store from './store'
 import router from './router'
 import './rem.js'
-import '@/dialog' 
-
+import '@/dialog'
 import '@/icons' // icon
 import '@/permission' // permission control
 // axios.defaults.headers.post['Content-Type'] = 'application/json;charset=UTF-8';
@@ -41,6 +40,8 @@ import '@/permission' // permission control
 
 // set ElementUI lang to EN
 // var eventHub = new Vue();
+ElementUI.TableColumn.props.showOverflowTooltip = { type: Boolean, default: true }
+Vue.use(ElementUI)
 Vue.use(ElementUI, { locale })
 // 如果想要中文版 element-ui，按如下方式声明
 // Vue.use(ElementUI)

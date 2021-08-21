@@ -16,6 +16,14 @@ export function getInfo(data) {
     params: data
   })
 }
+// 登录菜单接口
+export function getmenu(data) {
+  return request({
+    url: '/api/Login/GetTokenNuxt',
+    method: 'get',
+    params: data
+  })
+}
 // 登出接口
 export function logout(data) {
   return request({
@@ -107,7 +115,7 @@ export function deletescxxx(data) {
 // 查询生产线信息接口
 export function queryscxxx(data) {
   return request({
-    url: '/api/ProduceLine/GetSingleByID',
+    url: '/api/ProduceLine/Get',
     method: 'get',
     params: data
   })
@@ -188,12 +196,12 @@ export function modifyxsdgl(data) {
     }
   })
 }
-//更新销售单审核状态
+// 更新销售单审核状态
 export function upxsd(data) {
   return request({
     url: '/api/SellBill/UpdateStateFlag',
     method: 'put',
-    params:data,
+    params: data
   })
 }
 // 获取搅运车信息接口
@@ -234,8 +242,6 @@ export function modifyjyc(data) {
     }
   })
 }
-
-
 // 获取任务单信息接口
 export function querylistrwd(data) {
   return request({
@@ -247,7 +253,7 @@ export function querylistrwd(data) {
 // 任务单添加接口
 export function addrwd(data) {
   return request({
-    url:'/api/TaskBill/Post',
+    url: '/api/TaskBill/Post',
     method: 'post',
     data,
     headers: {
@@ -285,7 +291,7 @@ export function querylistylxx(data) {
 // 原料信息添加接口
 export function addylxx(data) {
   return request({
-    url:'/api/Material/Post',
+    url: '/api/Material/Post',
     method: 'post',
     data,
     headers: {
@@ -323,7 +329,7 @@ export function querylistgysxx(data) {
 // 供应商信息添加接口
 export function addgysxx(data) {
   return request({
-    url:'/api/Provider/Post',
+    url: '/api/Provider/Post',
     method: 'post',
     data,
     headers: {
@@ -361,7 +367,7 @@ export function querylistpkgl(data) {
 // 盘库管理添加接口
 export function addpkgl(data) {
   return request({
-    url:'/api/StoreInit/Post',
+    url: '/api/StoreInit/Post',
     method: 'post',
     data,
     headers: {

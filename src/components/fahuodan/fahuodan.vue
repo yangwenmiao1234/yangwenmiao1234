@@ -47,7 +47,7 @@
     <div style="display:flex;">
         <p style="width:100px ; margin-top:-0.5%;margin-left:2%">票单打印</p>
         <div style="margin-top:-1.5%;margin-left:%;display:flex;">
-            <el-form size="small" :label-position="labelPosition" label-width="80px" :model="form">
+            <el-form size="small"  label-width="80px" :model="form">
           <el-form-item label="自动打印:">
            <el-input style="width:50px" v-model="form.int"></el-input>
           </el-form-item>
@@ -65,7 +65,7 @@
        <el-button size="small" style="height:33px;width:80px;margin-left:3%;margin-top:-0.5%" type="primary" plain>预览</el-button>
          <el-button size="small" style="height:33px;width:80px;margin-left:3%;margin-top:-0.5%" type="primary" plain>配料单</el-button>
        <el-checkbox style="margin-top:1.5%;margin-left:2.5%" v-model="checked">显示页面</el-checkbox>
-<el-form style="margin-left:5%" size="small" :label-position="labelPosition" label-width="0" :model="form2">
+<el-form style="margin-left:5%" size="small"  label-width="0" :model="form2">
           <el-form-item label="">
            <el-input style="width:120px;margin-left:-10%" placeholder="哈哈哈哈" v-model="form2.int"></el-input>
           </el-form-item>
@@ -158,10 +158,36 @@ import Fhd from '@/components/fahuodan/index.vue'
         },],
         value: '',
         checked:true,
+        pickerOptions: {
+          shortcuts: [{
+            text: '最近一周',
+            onClick(picker) {
+              const end = new Date();
+              const start = new Date();
+              start.setTime(start.getTime() - 3600 * 1000 * 24 * 7);
+              picker.$emit('pick', [start, end]);
+            }
+          }, {
+            text: '最近一个月',
+            onClick(picker) {
+              const end = new Date();
+              const start = new Date();
+              start.setTime(start.getTime() - 3600 * 1000 * 24 * 30);
+              picker.$emit('pick', [start, end]);
+            }
+          }, {
+            text: '最近三个月',
+            onClick(picker) {
+              const end = new Date();
+              const start = new Date();
+              start.setTime(start.getTime() - 3600 * 1000 * 24 * 90);
+              picker.$emit('pick', [start, end]);
+            }
+          }]
+        },
+        value1: [new Date(2000, 10, 10, 10, 10), new Date(2000, 10, 11, 10, 10)],
+        value2: '',
       };
     },
-    methods:{
-      
-    }
   }
 </script>

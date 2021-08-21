@@ -56,7 +56,7 @@
               <el-form-item label="公司全称" prop="Caption" :rules="[{required: true, trigger: 'blur', message: '公司全称不能为不能为空'}]">
                 <el-input class="body_input" v-model="addform.Caption"></el-input>
               </el-form-item>
-              <el-form-item label="公司简介">
+              <el-form-item label="公司简介" prop="MinName" :rules="[{required: true, trigger: 'blur', message: '公司简介不能为不能为空'}]">
                 <el-input class="body_input" v-model="addform.MinName"></el-input>
               </el-form-item>
               <el-form-item label="法定代表">
@@ -173,7 +173,7 @@ export default {
       if (this.addform.ID == "") {
         this.adddialog = true;
         this.$message({
-          message: "请填写ID信息",
+          message: "请填写公司编号信息",
           type: "info",
         });
       } else {
@@ -272,10 +272,11 @@ export default {
 .hezi1 {
   margin-top: 2%;
 }
-/deep/.el-input__inner {
+/* 输入框 边框颜色设置*/
+/* /deep/.el-input__inner {
   background-color: #f7f0dcab;
   border-color: rgb(0 0 0 / 67%);
-}
+} */
 .from-2 {
   display: flex;
   height: 45px;
@@ -284,14 +285,14 @@ export default {
 }
 .from-2-1 {
   margin-left: 3%;
-  background-color: orange;
-  border: 2px solid rgb(0 0 0 / 67%);
+  /* background-color: orange; */
+  /* border: 2px solid rgb(0 0 0 / 67%); */
 }
 
 .from-2-2 {
   margin-left: 3%;
-  background-color: orange;
-  border: 2px solid rgb(0 0 0 / 67%);
+  /* background-color: orange; */
+  /* border: 2px solid rgb(0 0 0 / 67%); */
 }
 .body_input{
   width:220px;

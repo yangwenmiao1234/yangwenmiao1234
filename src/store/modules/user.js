@@ -1,12 +1,17 @@
-import { login, logout, getInfo } from '@/api/user'
+import { login, logout, getInfo ,getmenu} from '@/api/user'
 import { getToken, setToken, removeToken } from '@/utils/auth'
+import { asyncRoutes, constantRoutes } from '@/router'
 import { resetRouter } from '@/router'
+import Layout from '@/layout'
 
 const getDefaultState = () => {
   return {
     token: getToken(),
     name: '',
-    avatar: ''
+    avatar: '',
+    routes: [],
+    addRoutes: [],
+    roles: [],
   }
 }
 
@@ -25,9 +30,50 @@ const mutations = {
   SET_AVATAR: (state, avatar) => {
     state.avatar = avatar
   },
-  // SET_GETROUTER:(state, avatar)=>{
-
-  // }
+  SET_ROUTES: (state, routes) => {
+    state.addRoutes = routes
+    state.routes = constantRoutes.concat(routes)
+  },
+  SET_ROLES: (state, roles) => {
+    state.roles = roles
+  },
+}
+export function filterAsyncRoutes() {
+  login({
+      name:localStorage.getItem("name"),
+      pass:localStorage.getItem("pass")
+  }).then(response=>{
+    // var data1 = []
+    var data = []
+    var role = []
+    role = response
+    localStorage.setItem('roles' , role.role)
+      data = response.data.perTree.children
+      data.forEach(item => {
+        constantRoutes.push({
+          path: item.path,
+          component: Layout,
+          redirect: item.redirect,
+          meta: { title: item.label, icon: item.icon },
+          children: getChilder(item.children)
+        })
+      })
+  })
+  return constantRoutes
+}
+export function getChilder(dd) {
+  var data2 = []
+  dd.forEach(item => {
+    data2.push({
+      path: item.path,
+      name: item.vuekey,
+      // 组价要经过特殊处理 不然动态加载不出来
+      component:(resolve) => require([`@/views/${item.component}`], resolve),
+    // component:  resolve => require([`${item.component}`], resolve), 这个方法还没有试过
+      meta: { title: item.label, icon: item.icon }
+    })
+  })  
+  return data2
 }
 
 const actions = {
@@ -79,32 +125,38 @@ const actions = {
       })
     })
   // })
-},
-
-  // user logout
+}, 
   logout({ commit, state }) {
     return new Promise((resolve, reject) => {
       logout({
         name:localStorage.getItem("name"),
         pass:localStorage.getItem("pass")
       }).then(() => {
+         location.reload()
         localStorage.clear();
+        commit('RESET_STATE')
         removeToken() // must remove  token  first
         resetRouter()
-        commit('RESET_STATE')
         resolve()
       }).catch(error => {
         reject(error)
       })
     })
   },
-
   // remove token
   resetToken({ commit }) {
     return new Promise(resolve => {
       removeToken() // must remove  token  first
       commit('RESET_STATE')
       resolve()
+    })
+  },
+  generateRoutes({ commit }) {
+    return new Promise(resolve => {
+      let accessedRoutes
+      accessedRoutes = filterAsyncRoutes()
+      commit('SET_ROUTES', accessedRoutes)
+      resolve(accessedRoutes)
     })
   }
 }

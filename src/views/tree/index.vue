@@ -18,15 +18,16 @@
             </el-form-item>
           </el-form>
           <div>
-            <el-button class="from-2-1" type="primary" style="" @click="query()"
-              >查询</el-button
+            <el-button icon="el-icon-search" class="from-2-1" type="primary" style="" @click="query()"
+              plain>查询</el-button
             >
             <el-button
+            icon="el-icon-circle-plus-outline"
               class="from-2-2"
               type="primary"
               style=""
               @click="adddialog = true"
-              >添加</el-button
+              plain>添加</el-button
             >
           </div>
         </div>
@@ -54,10 +55,10 @@
           :model="addform"
         >
           <div class="addform-1">
-            <el-form-item label="名称">
-              <el-input v-model="addform.caption"></el-input>
+            <el-form-item label="名称" prop="caption" :rules="[{required: true, trigger: 'blur', message: '请输入名称'}]">
+              <el-input v-model="addform.caption" ></el-input>
             </el-form-item>
-            <el-form-item label="主机方量">
+            <el-form-item label="主机方量" prop="machineSquare" :rules="[{required: true, trigger: 'blur', message: '请输入主机方量'}]">
               <el-input v-model="addform.machineSquare"></el-input>
             </el-form-item>
             <el-form-item label="value值">
@@ -78,8 +79,8 @@
           </div>
         </el-form>
         <span slot="footer" class="dialog-footer">
-          <el-button @click="adddialog = false ,addfalse()">取 消</el-button>
-          <el-button type="primary" @click="(adddialog = false), add()"
+          <el-button plain icon="el-icon-circle-close" @click="adddialog = false ,addfalse()">取 消</el-button>
+          <el-button plain icon="el-icon-circle-check" type="primary" @click="(adddialog = false), add()"
             >确 定</el-button
           >
         </span>
@@ -120,7 +121,6 @@ export default {
   },
   methods: {
     query() {
-      alert("1")
       const aa = this.$refs.shengchanxian;
       aa.loading = true;
       queryscxxx({
@@ -135,6 +135,10 @@ export default {
           aa.size = response.data.PageSize;
           aa.total = response.data.dataCount
           aa.loading = false;
+          this.$message({
+            type: "success",
+            message: "查询成功",
+          });
         })
         .catch((error) => {
           this.loading = true;
@@ -145,63 +149,49 @@ export default {
         });
     },
     add() {
-      const aa = this.$refs.shengchanxian;
-      // if(this.addform.ID==''){
-      //   this.adddialog=true
-      //   this.$message({
-      //   message: '请填写ID信息',
-      //   type: 'info'
-      // });
-      // }else{
-      //   if(this.addform.MinName==''){
-      //     this.adddialog=true
-      //   this.$message({
-      //  message: '请填写公司简介信息',
-      //   type: 'info'
-      // });
-      // }else{
-      //   if(this.addform.Caption==''){
-      //     this.adddialog=true
-      //   this.$message({
-      //  message: '请填写公司全称信息',
-      //   type: 'info'
-      // });
-      //   }else{
-      addshenchanxianxinxi(
-        JSON.stringify({
-          MachineBrand: this.addform.machineBrand,
-          CompanyID: localStorage.getItem('comid'),
-          ID: this.addform.value,
-          Caption: this.addform.caption,
-          MachineSquare: this.addform.machineSquare,
-          InterfaceID: this.addform.interfaceID,
-          MachineModel: this.addform.machineModel,
-          Remark: this.addform.remark,
-        })
-      )
-        .then((response) => {
+      if(this.addform.caption===""){
+        this.adddialog = true
           this.$message({
-            message: "添加成功！",
-            type: "success",
-          });
-          aa.querylist();
-          this.addfalse()
-          // const gonsixinxi=this.$refs.gonsixinxi
-          // gonsixinxi.querylist()
-        })
-        .catch((error) => {
-          this.$message({
-            message: "添加未成功，请联系管理员",
-            type: "error",
-          });
-        });
-      // }
-      //   }
-      // }
-      // const gonsixinxi=this.$refs.gonsixinxi
-      // console.log(gonsixinxi)
-      // this.addform.ID=this.$refs.gonsixinxi.tableData[0].ID
-      // console.log(this.$refs.gonsixinxi.tableData)
+                 message: "请输入名称",
+                 type: "info",
+              });
+      }else{
+        if(this.addform.machineBrand===""){
+          this.adddialog = true
+            this.$message({
+                 message: "请输入主机方量",
+                 type: "info",
+              });
+        }else{
+          const aa = this.$refs.shengchanxian;
+            addshenchanxianxinxi(
+              JSON.stringify({
+                MachineBrand: this.addform.machineBrand,
+                CompanyID: localStorage.getItem('comid'),
+                ID: this.addform.value,
+                Caption: this.addform.caption,
+                MachineSquare: this.addform.machineSquare,
+                InterfaceID: this.addform.interfaceID,
+                MachineModel: this.addform.machineModel,
+                Remark: this.addform.remark,
+              })
+            )
+              .then((response) => {
+                this.$message({
+                  message: "添加成功！",
+                  type: "success",
+                });
+                aa.querylist();
+                this.addfalse()
+              })
+              .catch((error) => {
+                this.$message({
+                 message: "添加未成功，请联系管理员",
+                 type: "error",
+              });
+            });
+         }
+      }
     },
     querylist() {
       const aa = this.$refs.shengchanxian;
@@ -232,13 +222,9 @@ export default {
 .from-2-1 {
   /* margin-left: 116%; */
   width: 120px;
-  background-color: orange;
-  border: 2px solid rgb(0 0 0 / 67%);
 }
 .from-2-2 {
   /* margin-left: 116%; */
   width: 120px;
-  background-color: orange;
-  border: 2px solid rgb(0 0 0 / 67%);
 }
 </style>

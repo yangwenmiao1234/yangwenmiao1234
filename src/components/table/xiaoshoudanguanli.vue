@@ -94,6 +94,35 @@
               >
             </span>
           </el-dialog>
+          <div class="radio">
+              <el-radio
+              v-model="radio"
+              :label="0"
+              style="color: rgb(0 0 0 / 67%)"
+              type="text"
+              size="small"
+              @change="startxsdgl()"
+              >启用</el-radio
+            >
+            <el-radio
+            v-model="radio"
+              :label="1"
+              style="color: rgb(0 0 0 / 67%)"
+              type="text"
+              size="small"
+              @change="pausexsdgl()"
+              >暂停</el-radio
+            >
+            <el-radio
+            v-model="radio"
+              :label="2"
+              style="color: rgb(0 0 0 / 67%)"
+              type="text"
+              size="small"
+              @change="endxsdgl()"
+              >完成</el-radio
+            >
+          </div>
     <div class="table">
       <el-table
       v-loading="loading"
@@ -101,6 +130,8 @@
         :data="tableData"
         border
         :cell-style="rowClass"
+        highlight-current-row
+        @row-click="handleClickRow"
         style="width: 100%"
       >
         <el-table-column fixed="left" label="序号" width="50px">
@@ -150,27 +181,6 @@
               style="color: rgb(0 0 0 / 67%)"
               type="text"
               size="small"
-              @click="startxsdgl(scope.row)"
-              >启用</el-button
-            >
-            <el-button
-              style="color: rgb(0 0 0 / 67%)"
-              type="text"
-              size="small"
-              @click="pausexsdgl(scope.row)"
-              >暂停</el-button
-            >
-            <el-button
-              style="color: rgb(0 0 0 / 67%)"
-              type="text"
-              size="small"
-              @click="endxsdgl(scope.row)"
-              >完成</el-button
-            >
-            <el-button
-              style="color: rgb(0 0 0 / 67%)"
-              type="text"
-              size="small"
               @click="editorClick(scope.row), (editordialog = true)"
               >编辑</el-button
             >
@@ -211,7 +221,9 @@ import { export2Excel } from '@/common/js/util'
 export default {
   data() {
     return {
+      radio:'',
       stateflag:'',
+      ID:'',
       columns:[
         {title:'销售单号',key:'ID'},
         {title:'供货日期',key:'SupplyTimeSellBill'},
@@ -446,11 +458,15 @@ export default {
       this.viewform.note = row.note;
       // console.log(row)
     },
+     handleClickRow(row){
+       this.radio = row.StateFlag
+       this.ID = row.ID
+    },
     // 启用状态
     startxsdgl(row){
       this.stateflag = '0'
       upxsd({
-        ID : row.ID,
+        ID : this.ID,
         stateflag : this.stateflag
       }).then((response)=>{
         this.querylist()
@@ -469,7 +485,7 @@ export default {
     endxsdgl(row){
         this.stateflag = '2'
       upxsd({
-        ID : row.ID,
+        ID : this.ID,
         stateflag : this.stateflag
       }).then((response)=>{
         this.querylist()
@@ -486,9 +502,10 @@ export default {
     },
     // 暂停状态
     pausexsdgl(row){
+      alert(this.ID)
       this.stateflag = '1'
       upxsd({
-        ID : row.ID,
+        ID : this.ID,
         stateflag : this.stateflag
       }).then((response)=>{
         this.querylist()
@@ -581,5 +598,11 @@ export default {
 }
 .body-picker-1{
   width:210px;margin-left:0%
+}
+.table{
+  margin-top: 1.5%;
+}
+.radio{
+  margin-left: 80%;
 }
 </style>

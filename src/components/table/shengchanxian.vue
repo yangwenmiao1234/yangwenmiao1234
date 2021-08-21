@@ -5,43 +5,6 @@
   <div class="body" style="width: 100%">
     <el-dialog
     v-dialogDrag
-      title="详情"
-      :visible.sync="viewdialog"
-      width="30%"
-      :before-close="handleClose"
-    >
-      <el-form
-        label-width="80px"
-        :model="viewform"
-      >
-        <div class="chakanform-1">
-          <el-form-item label="名称">
-            <el-input v-model="viewform.AutoID"></el-input>
-          </el-form-item>
-          <el-form-item label="主机方量">
-            <el-input v-model="viewform.CompanyID"></el-input>
-          </el-form-item>
-          <el-form-item label="设备品牌">
-            <el-input v-model="viewform.ID"></el-input>
-          </el-form-item>
-          <el-form-item label="设备型号">
-            <el-input v-model="viewform.Caption"></el-input>
-          </el-form-item>
-          <el-form-item label="接口编码">
-            <el-input v-model="viewform.MachineSquare"></el-input>
-          </el-form-item>
-          <el-form-item label="备注">
-            <el-input v-model="viewform.MachineBrand"></el-input>
-          </el-form-item>
-        </div>
-      </el-form>
-      <span slot="footer" class="dialog-footer">
-        <el-button @click="viewdialog = false">取 消</el-button>
-        <el-button type="primary" @click="viewdialog = false">确 定</el-button>
-      </span>
-    </el-dialog>
-    <el-dialog
-    v-dialogDrag
       title="编辑"
       :visible.sync="editordialog"
       width="30%"
@@ -76,8 +39,8 @@
           </div>
       </el-form>
       <span slot="footer" class="dialog-footer">
-        <el-button @click="editordialog = false">取 消</el-button>
-        <el-button type="primary" @click="(editordialog = false), modify()"
+        <el-button icon="el-icon-circle-close" @click="editordialog = false">取 消</el-button>
+        <el-button icon="el-icon-circle-check" type="primary" @click="(editordialog = false), modify()"
           >确 定</el-button
         >
       </span>
@@ -109,14 +72,14 @@
         <el-table-column fixed="right" label="操作" width="150px">
           <template slot-scope="scope">
             <el-button
-              style="color: rgb(0 0 0 / 67%)"
+               icon="el-icon-delete"
               type="text"
               size="small"
               @click="editorClick(scope.row), (editordialog = true)"
               >编辑</el-button
             >
             <el-button
-              style="color: rgb(0 0 0 / 67%)"
+             icon="el-icon-edit"
               type="text"
               size="small"
               @click="deletes(scope.row)"
@@ -155,14 +118,6 @@ export default {
       total: 0,
       size: 10,
       page: 1,
-      viewform: {
-        AutoID: "",
-        CompanyID: "",
-        ID: "",
-        Caption: "",
-        MachineSquare: "",
-        MachineBrand: "",
-      },
       editorform: {
         caption: "",
         machineSquare: "",
@@ -171,6 +126,7 @@ export default {
         interfaceID: "",
         remark: "",
         value:'',
+        ID:'',
       },
       tableData: [
         {
@@ -217,6 +173,7 @@ export default {
       this.editorform.machineBrand = row.MachineBrand;
       this.editorform.interfaceID = row.InterfaceID;
       this.editorform.remark = row.Remark;
+      this.editorform.ID = row.ID
     },
     modify() {
       modifyscxxx(
@@ -229,6 +186,7 @@ export default {
           InterfaceID: this.editorform.interfaceID,
           MachineModel: this.editorform.machineModel,
           Remark: this.editorform.remark,
+          ID: this.editorform.ID 
         })
       )
         .then((response) => {

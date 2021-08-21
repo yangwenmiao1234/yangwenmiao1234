@@ -1,7 +1,7 @@
 <template>
 <div class="body">
- <!-- <el-tabs class="body_tab" type="border-card"> -->
-  <!-- <el-tab-pane label="Mes配方"> -->
+ <el-tabs class="body_tab" type="border-card">
+  <el-tab-pane label="Mes配方">
         <!-- <span>标准配方库</span> -->
     <div class="header">
       <span style="margin-top: 0.6%">生产线：</span>
@@ -45,8 +45,8 @@
         </el-option>
       </el-select>  
       <div style="margin-top: 0.6%; margin-left: 1%">
-        <el-radio @change="query(),querydata(),zhucongtable()" v-model="radio" label="0">主从</el-radio>
-        <el-radio @change="query(),querydata(),zhucong=false" v-model="radio" label="1">整表</el-radio>
+        <el-radio @change="zhucong()" v-model="radio" label="0">主从</el-radio>
+        <el-radio @change="zhengbiao()" v-model="radio" label="1">整表</el-radio>
       </div>
     </div>
     <div class="button" style="display:flex">
@@ -58,7 +58,7 @@
     <div style="margin-top:3%;height:350px">
         <el-table
         v-loading="loading"
-        :header-cell-style="headClass"
+        :header-cell-style="{  background: 'rgba(249, 182, 3, 0.67)', color: '#606266' }"
         :data="tableData"
         border
         :cell-style="rowClass"
@@ -69,20 +69,20 @@
             {{ scope.$index + 1 }}
           </template>
         </el-table-column>
-        <el-table-column  v-for="item in headerdata"  :prop="item.ColumnName" :key="item.ColumnName" :label="item.ColumnValue">
+        <el-table-column :prop="item.ColumnName" v-for="item in headerdata" :key="item.ColumnName" :label="item">
            <template slot-scope="scope">
                     <span style="center">{{scope.row[scope.column.property]}}</span>
               </template>
       </el-table-column>
         <el-table-column fixed="right" label="操作" width="100">
           <template slot-scope="scope">
-            <!-- <el-button
+            <el-button
               style="color: rgb(0 0 0 / 67%)" 
               @click="handleClick(scope.row)"
               type="text"
               size="small"
               >查看</el-button
-            > -->
+            >
             <el-button style="color: rgb(0 0 0 / 67%)" type="text" size="small"
              @click="editorClick(scope.row)"
               >编辑</el-button
@@ -102,46 +102,6 @@
        <!-- layout="total, sizes, prev, pager, next, jumper" :total="total" -->
       </el-pagination>
     </div>
-    <div style="margin-top:2%" v-if="zhucong">
-      <el-table
-                v-loading="loading"
-                :header-cell-style="headClass"
-                :data="tableData3"
-                border
-                :cell-style="rowClass"
-                style="width: 100%"
-              >
-                  <el-table-column fixed="left" prop="name" :label="title+title1+title2" width="70px">
-                   
-                  </el-table-column>
-                   <!-- <el-table-column :prop="item.ColumnName" v-for="item in headerdata2" :key="item.ColumnName" :label="item.ColumnName">
-                    
-                              <span style="center">{{scope.row[scope.column.property]}}</span>
-                        </template>
-                </el-table-column> -->
-                  <el-table-column prop="" v-for="item in headerdata3" :key="item.ColumnName" :label="item.ColumnValue">
-                </el-table-column>
-        </el-table>
-        <el-form  label-width="80px" :model="addfrom">
-      <div style="display:flex;width:100%;margin-top:2%">
-        <el-form-item label-width="80px" label="当前容重:">
-          <el-input  v-model="addfrom.sumWeightCur"></el-input>
-        </el-form-item>
-        <el-form-item label-width="80px" label="最小容重:">
-          <el-input  v-model="addfrom.sumWeightMin"></el-input>
-        </el-form-item>
-        <el-form-item label-width="80px" label="最大容重:">
-          <el-input  v-model="addfrom.sumWeightMax"></el-input>
-        </el-form-item>
-        <el-form-item label-width="80px" label="水胶比:">
-          <el-input  v-model="addfrom.sjb"></el-input>
-        </el-form-item>
-        <el-form-item label-width="80px" label="砂率:">
-          <el-input  v-model="addfrom.sl"></el-input>
-    </el-form-item>
-    </div>
-        </el-form>
-  </div>
     <div class="dialog">
         <el-dialog
         v-dialogDrag
@@ -166,12 +126,11 @@
             <el-button type="primary" @click="setupdialog = false, addsave()">确 定</el-button>
           </span>
         </el-dialog>
-        <!--  :fullscreen="true" 是否全屏 -->
           <el-dialog
           v-dialogDrag
             title="混凝土配方"
             :visible.sync="adddialog"
-            width="90%"
+            :fullscreen="true"
             :before-close="handleClose">
             <div class="dialogheader" style="display:flex;width:100%;">
               <div style="display:flex;width:100%" >
@@ -242,21 +201,22 @@
               <div>
                  <el-form :model="ruleForm">
                     <el-form-item label="生产线">
-                    <el-radio-group v-if="checkbox"  v-model="radio1">
-                  <el-radio
+                    <el-checkbox-group v-if="checkbox"  v-model="checklist">
+                  <el-checkbox
                     v-for="item in hardwareListData"
                     :key="item.ID"
-                    :label="item.ID"
-                  @change=" handleChange($event,item.ID,item.Caption)">{{item.Caption}}</el-radio>
-                </el-radio-group>
+                    :label="item.Caption"
+                  @change=" handleChange($event,item.ID,item.Caption)">{{item.Caption}}</el-checkbox>
+                </el-checkbox-group>
               </el-form-item>
-              <div>
+              </el-form>
+              <div id="table1Div">
               <el-table
-                v-loading="loading"
-                :header-cell-style="headClass"
-                :data="tableData2"
-                border
-                :cell-style="rowClass"
+                :v-loading="loading"
+                :header-cell-style="{  background: 'rgba(249, 182, 3, 0.67)', color: '#606266' }"
+                :data="data"
+                :border="border"
+                :cell-style="cell"
                 style="width: 100%"
               >
                   <el-table-column fixed="left" prop="name" :label="title+title1+title2" width="70px">
@@ -295,46 +255,37 @@
                       >
                     </template>
                   </el-table-column>
-                </el-table>
+              </el-table>
               </div>
-              <div style="display:flex;width:100%;margin-top:2%">
-                <el-form-item label-width="80px" label="当前容重:">
-                  <el-input  v-model="addfrom.sumWeightCur"></el-input>
-                </el-form-item>
-                <el-form-item label-width="80px" label="最小容重:">
-                  <el-input  v-model="addfrom.sumWeightMin"></el-input>
-                </el-form-item>
-                <el-form-item label-width="80px" label="最大容重:">
-                  <el-input  v-model="addfrom.sumWeightMax"></el-input>
-                </el-form-item>
-                <el-form-item label-width="80px" label="水胶比:">
-                  <el-input  v-model="addfrom.sjb"></el-input>
-                </el-form-item>
-                <el-form-item label-width="80px" label="砂率:">
-                  <el-input  v-model="addfrom.sl"></el-input>
-            </el-form-item>
+              <div id="tableDiv111" >
+              
               </div>
-            </el-form>
               </div>
             <span slot="footer" class="dialog-footer">
               <el-button style="margin-top:10%" @click="adddialog = false">取 消</el-button>
-              <el-button style="margin-top:10%" type="primary" @click="adddialog = false , add()">确 定</el-button>
+              <el-button style="margin-top:10%" type="primary" @click="adddialog = false , add() ,handleSave(scope.$index, scope.row)">确 定</el-button>
             </span>
           </el-dialog>
       </div>
-    <!-- </el-tab-pane> -->
+    </el-tab-pane>
    <!-- <el-tab-pane label="Pcs配方">
      <Tab>
       </Tab>
     </el-tab-pane> -->
-<!-- </el-tabs> -->
+</el-tabs>
   </div>
 </template>
+ <script src="https://code.jquery.com/jquery-3.0.0.min.js"></script>
+ <script
+  src="https://code.jquery.com/jquery-3.4.1.min.js"
+  integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo="
+  crossorigin="anonymous"></script>
 <script>
 import { queryshenchanxianxinxi} from "@/api/user.js";
 import { shiyanshi , addshiyanshi , modifyshiyanshi , deleteshiyanshi , shiyanshicdt , shiyanshidata ,querypeifang,
-          addSave , querypeizhi , addSave2
+          addSave , querypeizhi
         } from "@/api/shiyanshi.js"
+        
 // import Tab from '@/views/shiyanshi/biaozhunpeifang/index2'
 // import tableVue from '@/components/biaozhunpeifang/table.vue';
 export default {
@@ -343,34 +294,33 @@ export default {
     this.query()
     this.shiyanshicdt()
     this.querydata()
-    this.zhucongtable()
+    this.handleChange()
+  },
+    render(){
+    
   },
   data() {
     return {
-      zhucong:true,
+      jsonData : [],
+      table:[{
+        data:'',
+        cell:'',
+        loading:'loading',
+        header:'{  background: rgba(249, 182, 3, 0.67), color: #606266 }',
+        border:'border'
+      }],
       headerdata:[],
       tableData: [],
       headerdata2:[],
       tableData2: [{
         name:'最大值',
-        edit:true,
+        edit:false,
       },{
         name:'最小值',
-        edit:true,
+        edit:false,
       },{
         name:'配方值',
-        edit:true,
-      }],
-      headerdata3:[],
-      tableData3: [{
-        name:'最大值',
-        edit:true,
-      },{
-        name:'最小值',
-        edit:true,
-      },{
-        name:'配方值',
-        edit:true,
+        edit:false,
       }],
       page:1,
       size:10,
@@ -378,12 +328,12 @@ export default {
       title:'',
       title1:'',
       title2:'',
-      checked2: false,
+      checked2: true,
       checked3: true,
-      checked1: false,
-      checked4: false,
-      checked5: false,
-      checked6: false,
+      checked1: true,
+      checked4: true,
+      checked5: true,
+      checked6: true,
       addfrom : {
         Caption:"",
         MixTime:"",
@@ -393,16 +343,11 @@ export default {
         Remark:"",
         SerialNum:"",
         PercentWS:'',
-        sumWeightCur:'',
-        sumWeightMin:'',
-        sumWeightMax:'',
-        sjb:'',
-        sl:''
         },
       adddialog:false,
       type:'选项一',
       setupdialog:false,
-      radio: '0',
+      radio: "0",
       options: [
         {
           value: "",
@@ -471,11 +416,7 @@ export default {
         IsCheck:"",
       },
       hardwareListData:[],
-      checklist:[
-      ],
-      checklist1:[
-      ],
-      radio1:'',
+      checklist:[],
       checkbox: true,
       // disabled: false,
      };
@@ -521,12 +462,28 @@ export default {
         comid:localStorage.getItem('comid')
       })
         .then((response) => {
+          // this.tableData = response.data.data;
+          // this.page = response.data.page;
+          // this.size = response.data.PageSize;
+          // this.total = response.data.dataCount;
+          // this.tableData = response.data
           var header = []
           var table = []
-          this.headerdata = response.data
-          if(this.radio === '0'){
-            this.zhucongtable()
-          }
+          header = response.data
+          header.forEach(item => {
+            this.headerdata.push(
+              item.ColumnValue,
+              // item.ColumnData
+            )
+          })
+          // header.forEach(item => {
+          //   table.push(
+          //     // item.ColumnValue,
+          //     item.ColumnData.split(1,3)
+          //   )
+          //   alert(table)
+          // })
+          
           this.loading = false;
         })
         .catch((error) => {
@@ -584,20 +541,13 @@ export default {
         Remark : this.addfrom.Remark,
         SerialNum : this.addfrom.SerialNum,
         PercentWS : this.addfrom.PercentWS,
-        sumWeightCur : this.addfrom.sumWeightCur,
-        sumWeightMin : this.addfrom.sumWeightMin,
-        sumWeightMax : this.addfrom.sumWeightMax,
-        sjb : this.addfrom.sjb,
-        sl : this.addfrom.sl,
         ProduceLineID : this.value,
-        typeProduct : this.value2,
         CompanyID : localStorage.getItem('comid'),
         ActionTime:localStorage.getItem('ActionTime'),
         ActionUserID:localStorage.getItem('ActionUserID'),
         ActionUserName:localStorage.getItem('ActionUserName'),
       }).then(response=>{
         this.query(),
-        this.handleSave()
         this.$message({
           type:'success',
           message:'添加成功'
@@ -611,9 +561,10 @@ export default {
     },
     addcheck(){
       this.checklist= []
-      this.radio1 = this.value
       this.hardwareListData.forEach(item=>{
-              this.checklist.push(item.ID,item.Caption)
+            if(item.ID===this.value){
+              this.checklist.push(item.Caption)
+            }
           })
           let formulasetting = JSON.stringify({
         isFormulaTitleShowStoreCaption: this.checked1,
@@ -664,30 +615,30 @@ export default {
       })
     },
     handleSave(index, row){
-    console.log(this.tableData2)
-    var Maxlist =  this.tableData2[0]
-    var Minlist = this.tableData2[1]
-    var formulalist = this.tableData2[2]
-     var comID = localStorage.getItem('comid')
-     var typeProduct = this.value2
-     var formulaCaption = this.addfrom.Caption
-     var produceLineID = this.radio1
-     var  param ={comID,typeProduct,formulaCaption,produceLineID,Maxlist,Minlist,formulalist}
-        addSave2(
-          param
-        ).then(response=>{
-          this.query()
-          this.$message({
-            type:'success',
-            message:'添加成功'
-          })
-        }).catch(error=>{
-          
-        })
-    },
-    handleChange(){
-      console.log(this.hardwareListData)
-      console.log(this.radio1)
+      // console.log(this.tableData2)
+      var Maxlist =  this.tableData2[0]
+      var Minlist = this.tableData2[1]
+      var formulalist = this.tableData2[2]
+     
+     var  param ={Maxlist,Minlist,formulalist}
+      // console.log(this.headerdata2)
+    //  row.forEach(item=>{
+    //     // if(item.name === '最大值'){
+    //     //   Maxlist.push(
+    //     //   item
+    //     // )}else if(item.name === '最小值'){
+    //     //     Minlist.push(
+    //     //       item
+    //     //     )
+    //     // }else{
+    //     //    peifang.push(
+    //     //       item
+    //     //     )
+    //     // }
+    //     // return Maxlist,Minlist,peifang
+    //     param.item
+    //   })
+        console.log(param)
     },
     out(){
       alert("等待接口")
@@ -704,41 +655,6 @@ export default {
         this.checked5 = response.data.IsFormulaTitleShowWeightMax,
         this.checked6 = response.data.IsFormulaTitleShowWeightMin
       })
-    },
-    zhucongtable(){
-      this.radio1 = this.value
-          let formulasetting = JSON.stringify({
-        isFormulaTitleShowStoreCaption: this.checked1,
-        isFormulaTitleShowStoreCaptionMin: this.checked2,
-        isFormulaTitleShowStoreCaptionMES: this.checked3,
-        isFormulaTitleShowMaterialCaption: this.checked4,
-        isFormulaTitleShowWeightMax: this.checked5,
-        isFormulaTitleShowWeightMin: this.checked6
-          })
-        querypeifang({
-            formulasetting,
-            comid : localStorage.getItem('comid'),
-            producelineid : this.value
-          }).then((response)=>{
-            this.headerdata3 = response.data
-            if(this.checked1==true){
-              this.title = '料仓全称'
-            }else{
-              this.title = ''
-            }
-            if(this.checked2==true){
-              this.title1 = '料仓简称'
-            }else{
-              this.title1 = ''
-            }
-            if(this.checked3==true){
-              this.title2 = '生产系统'
-            }else{
-              this.title2 = ''
-            }
-         })
-      this.zhucong = true
-      this.queryselect()
     },
     handleClose(done) {
         this.$confirm('确认关闭？')
@@ -758,12 +674,67 @@ export default {
       this.querydata();
     },
     headClass() {
-      return 'background-color: rgba(249, 182, 3, 0.67);color: #606266;text-align:center';
-      // return ""
+      return "text-align:center";
     },
     rowClass() {
       return "text-align:center";
     },
+    handleChange:function($event,ID,Caption){
+      if($event==true){
+          //  this.checklist= []
+      this.hardwareListData.forEach(item=>{
+            if(item.ID===ID){
+              this.checklist.push(item.Caption)
+            }
+          })
+          let formulasetting = JSON.stringify({
+        isFormulaTitleShowStoreCaption: this.checked1,
+        isFormulaTitleShowStoreCaptionMin: this.checked2,
+        isFormulaTitleShowStoreCaptionMES: this.checked3,
+        isFormulaTitleShowMaterialCaption: this.checked4,
+        isFormulaTitleShowWeightMax: this.checked5,
+        isFormulaTitleShowWeightMin: this.checked6
+          })
+        querypeifang({
+            formulasetting,
+            comid : localStorage.getItem('comid'),
+            producelineid : this.value
+          }).then((response)=>{
+             var html = "";
+            // this.headerdata2 = response.data
+            // if(this.checked1==true){
+            //   this.title = '料仓全称'
+            // }else{
+            //   this.title = ''
+            // }
+            // if(this.checked2==true){
+            //   this.title1 = '料仓简称'
+            // }else{
+            //   this.title1 = ''
+            // }
+            // if(this.checked3==true){
+            //   this.title2 = '生产系统'
+            // }else{
+            //   this.title2 = ''
+            // }
+            this.jsonData = response.data;
+             this.jsonData.forEach(element => {
+                   
+                });
+             html += '<el-table :v-loading="loading" :data="data" :border="border" :cell-style="cell" style="width: 100%">';
+             html += '<el-table-column :prop="item.ColumnValue" v-for="item in headerdata2 " :key="item.ColumnName" :label="item.ColumnValue">';
+             html += '<p>31211223</p>'
+             html += "</el-table-column>";
+             html += '<el-table>';
+            // console.log(html);
+            // console.log($("#table1Div").html());
+          $(html).appendTo('#tableDiv111');
+           console.log($("#tableDiv111").html());
+         })
+      }else{
+        
+      }
+    }
   }, 
   mounted(){
     this.queryselect()

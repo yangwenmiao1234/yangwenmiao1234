@@ -11,7 +11,6 @@
             :before-close="handleClose"
           >
             <el-form
-              :label-position="editorlabel"
               label-width="80px"
               :model="editorform"
             >
@@ -23,7 +22,7 @@
                     <span class="body-span-2">供货时间：</span>
                     <el-date-picker
                      class="body-picker-1"
-                    v-model="editorform.SupplyTimeSellBill"
+                    v-model="SupplyTimeSellBill"
                     type="datetime"
                     placeholder="选择日期时间"
                     align="right"
@@ -173,7 +172,6 @@
       <el-pagination
         @size-change="handleSizeChange"
         @current-change="handleCurrentChange"
-        :current-page="currentPage4"
         :page-sizes="[10, 20]"
         :page-size="size"
         layout="total, sizes, prev, pager, next, jumper"
@@ -208,6 +206,39 @@ export default {
   components: { Rwd , Index },
   data() {
     return {
+      pickerOptions: {
+        shortcuts: [
+          {
+            text: "最近一周",
+            onClick(picker) {
+              const end = new Date();
+              const start = new Date();
+              start.setTime(start.getTime() - 3600 * 1000 * 24 * 7);
+              picker.$emit("pick", [start, end]);
+            },
+          },
+          {
+            text: "最近一个月",
+            onClick(picker) {
+              const end = new Date();
+              const start = new Date();
+              start.setTime(start.getTime() - 3600 * 1000 * 24 * 30);
+              picker.$emit("pick", [start, end]);
+            },
+          },
+          {
+            text: "最近三个月",
+            onClick(picker) {
+              const end = new Date();
+              const start = new Date();
+              start.setTime(start.getTime() - 3600 * 1000 * 24 * 90);
+              picker.$emit("pick", [start, end]);
+            },
+          },
+        ],
+      },
+      value1: [new Date(2000, 10, 10, 10, 10), new Date(2000, 10, 11, 10, 10)],
+      SupplyTimeSellBill: "",
       ID:"",
       TaskSource:'',
       ProjectAddress:'',
@@ -225,7 +256,6 @@ export default {
       page: 1,
       editorform: {
         ID:'',
-        SupplyTimeSellBill:'',
         ProjectCaption: "",
         ProjectAddress: "",
         ProjectManager:"",
@@ -269,6 +299,10 @@ export default {
       currentRow: null,
       viewdialog: false,
       editordialog: false,
+      options:[{
+        value:'1',
+        label:'任务来了',
+      }]
     };
   },
   methods: {
@@ -302,7 +336,7 @@ export default {
       modifyxsdgl(
         JSON.stringify({
         ID:this.editorform.ID,
-        SupplyTimeSellBill:this.editorform.SupplyTimeSellBill,
+        SupplyTimeSellBill:this.SupplyTimeSellBill,
         ProjectCaption:this.editorform.ProjectCaption,
         ProjectAddress:this.editorform.ProjectAddress,
         ProjectManager:this.editorform.ProjectManager,
@@ -373,7 +407,7 @@ export default {
     },
     editorClick(row) {
       this.editorform.ID=row.ID
-      this.editorform.SupplyTimeSellBill=row.SupplyTimeSellBill
+      this.SupplyTimeSellBill=row.SupplyTimeSellBill
       this.editorform.ProjectCaption=row.ProjectCaption
       this.editorform.ProjectAddress=row.ProjectAddress
       this.editorform.ProjectManager=row.ProjectManager

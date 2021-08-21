@@ -56,6 +56,8 @@
         style="width: 100%"
         row-key="value"
         :cell-style="rowClass"
+        highlight-current-row
+        @row-click="handleClickRow"
         :tree-props="{ children: 'children', hasChildren: 'hasChildren' }"
       >
         <el-table-column label="菜单序号" prop="order"> </el-table-column>
@@ -101,13 +103,13 @@
         v-dialogDrag
         width="40%"
       >
-        <el-form ref="form" :model="addform" label-width="100px">
+        <el-form ref="addform" :model="addform" label-width="100px">
           <el-row style="display:flex">
             <div>
               <el-form-item label="父级菜单名称">
                 <el-input class="body_input" v-model="addform.pid"></el-input>
               </el-form-item>
-              <el-form-item label="菜单名称">
+              <el-form-item label="菜单名称" prop="name" :rules="[{ required: true, message: '菜单名称不能为空'},]">
                 <el-input class="body_input" v-model="addform.name"></el-input>
               </el-form-item>
               <el-form-item label="菜单别名">
@@ -116,16 +118,16 @@
               <el-form-item label="菜单序号">
                 <el-input class="body_input" v-model="addform.orderSort"></el-input>
               </el-form-item>
-              <el-form-item label="菜单指向">
+              <el-form-item label="菜单指向" prop="linkUrl" :rules="[{ required: true, message: '菜单指向不能为空'},]">
                 <el-input
                   class="body_input"
                   v-model="addform.linkUrl"
                 ></el-input>
               </el-form-item>
-              <el-form-item label="菜单组件">
+              <el-form-item label="菜单组件" prop="component" :rules="[{ required: true, message: '菜单组件不能为空'},]">
                 <el-input class="body_input" v-model="addform.component"></el-input>
               </el-form-item>
-              <el-form-item label="菜单ID">
+              <el-form-item label="菜单ID" prop="id" :rules="[{ required: true, message: '菜单ID不能为空'},]">
                 <el-input
                   class="body_input"
                   v-model="addform.id"
@@ -133,7 +135,7 @@
               </el-form-item>
             </div>
              <div>
-               <el-form-item label="菜单path">
+               <el-form-item label="菜单路径" prop="path" :rules="[{ required: true, message: '菜单路径不能为空'},]">
                 <el-input class="body_input" v-model="addform.path"></el-input>
               </el-form-item>
               <el-form-item label="菜单编码">
@@ -142,8 +144,16 @@
               <el-form-item label="菜单描述">
                 <el-input class="body_input" v-model="addform.description"></el-input>
               </el-form-item>
-            <el-form-item label="是否还有子菜单">
-                <el-input class="body_input" v-model="addform.hasChildren"></el-input>
+            <el-form-item label="是否还有子菜单" prop="hasChildren" :rules="[{ required: true, message: '是否还有子菜单'},]">
+                <!-- <el-input class="body_input" v-model="addform.hasChildren"></el-input> -->
+                <el-select v-model="addform.hasChildren" clearable placeholder="请选择">
+                <el-option
+                  v-for="item in options"
+                  :key="item.value"
+                  :label="item.label"
+                  :value="item.value">
+                </el-option>
+              </el-select>
               </el-form-item>
               <el-form-item label="菜单图标">
                 <el-input class="body_input" v-model="addform.icon"></el-input>
@@ -152,8 +162,8 @@
           </el-row>
         </el-form>
         <span slot="footer" class="dialog-footer">
-            <el-button @click="open = false ,  cancel()">取 消</el-button>
-            <el-button type="primary" @click="open = false , add()">确 定</el-button>
+            <el-button icon="el-icon-circle-close" @click="open = false ,  cancel()">取 消</el-button>
+            <el-button icon="el-icon-circle-check" type="primary" @click="open = false , submitForm('addform')">确 定</el-button>
           </span>
       </el-dialog>
     </div>
@@ -198,10 +208,18 @@ export default {
         id:'',
         code:'',
         description:'',
-        hasChildren:'',
+        // hasChildren:'',
         icon:'',
-        isDeleted:''
+        isDeleted:'',
+        hasChildren: ''
       },
+      options: [{
+          value: 'true',
+          label: 'true'
+        }, {
+          value: 'false',
+          label: 'false'
+        },],
       rules: {
         menuName: [
           { required: true, message: "菜单名称不能为空", trigger: "blur" },
@@ -271,6 +289,16 @@ export default {
           });
         });
     },
+    submitForm(formName) {
+        this.$refs[formName].validate((valid) => {
+          if (valid) {
+            this.add()
+          } else {
+           this.open = true
+            return false;
+          }
+        });
+      },
       add() {
      if (this.bianliang==='新增') {
         addmenu(
@@ -337,6 +365,13 @@ export default {
     },
     rowClass() {
       return "text-align:center";
+    },
+    handleClickRow(row){
+      if(row.haschildren==false){
+          this.addform.pid = ''
+      }else{
+         this.addform.pid = row.value 
+      }
     },
     handleAdd(row) {
       this.title= "添加菜单"

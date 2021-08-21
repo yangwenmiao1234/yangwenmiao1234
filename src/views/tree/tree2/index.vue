@@ -9,13 +9,17 @@
     >
       <div style="width: 100%; height: 100%;">
           <el-button
+          icon="el-icon-plus"
             type="primary"
             @click="(adddialog = true)"
+            plain
             >增加主类型</el-button
           >
            <el-button
+           icon="el-icon-plus"
             type="primary"
             @click="add2()"
+            plain
             >增加次类型</el-button
           >
           <!-- :accordion="true" 设置只展开一个同级节点 
@@ -36,12 +40,14 @@
         <span>{{ node.label }}</span>
         <span style="margin-left:30%">
           <el-button
+          icon="el-icon-edit"
             type="text"
             size="mini"
             @click="() => Modify(node, data)">
             修改
           </el-button>
           <el-button
+          icon="el-icon-delete"
             type="text"
             size="mini"
             @click="() => delet2(node, data)">
@@ -52,8 +58,8 @@
           </el-tree>
         </div>
       <span slot="footer" class="dialog-footer">
-        <el-button @click="dialogVisible = false">取 消</el-button>
-        <el-button type="primary" @click="dialogVisible = false"
+        <el-button icon="el-icon-circle-close" @click="dialogVisible = false" plain>取 消</el-button>
+        <el-button icon="el-icon-circle-check" type="primary" @click="dialogVisible = false" plain
           >确 定</el-button
         >
       </span>
@@ -77,43 +83,35 @@
         ><span>...</span></el-button
       >
       <el-button
+      icon="el-icon-refresh-left"
         type="primary"
-        style="
-          margin-left: 10%;
-          width: 120px;
-          background-color: orange;
-        "
-        @click="queryselect()"
+        style=" margin-left: 10%;"
+        @click="queryselect(),querylist()"
+        plain
         >刷新</el-button
       >
       <el-button
+      icon="el-icon-circle-plus-outline"
         type="primary"
-        style="
-          margin-left: 10%;
-          width: 120px;
-          background-color: orange;
-        "
-        @click="addmaindialog()"
+        style="margin-left: 10%; "
+        @click="add()"
+        plain
         >增加</el-button
       >
       <el-button
+      icon="el-icon-download"
         type="primary"
-        style="
-          margin-left: 2%;
-          width: 120px;
-          background-color: orange;
-        "
+        style=" margin-left: 2%;"
         @click="get"
+        plain
         >获取pcs库存</el-button
       >
       <el-button
+      icon="el-icon-refresh"
         type="primary"
-        style="
-          margin-left: 2%;
-          width: 120px;
-          background-color: orange;
-        "
+        style=" margin-left: 2%;"
         @click="update"
+        plain
         >更新pcs原料</el-button
       >
     </div>
@@ -134,9 +132,6 @@
             <el-form-item label="公司名称">
               <el-input v-model="addfrom.companyID"></el-input>
             </el-form-item>
-            <el-form-item label="ID">
-              <el-input v-model="addfrom.ID"></el-input>
-            </el-form-item>
             <el-form-item label="序号">
               <el-input v-model="addfrom.orderIndex"></el-input>
             </el-form-item>
@@ -150,8 +145,8 @@
               <el-input v-model="addfrom.remark"></el-input>
             </el-form-item>
           </el-form>
-          <el-button @click="adddialog = false">取 消</el-button>
-          <el-button type="primary" @click="adddialog = false,addtree1()">确 定</el-button>
+          <el-button icon="el-icon-circle-close" @click="adddialog = false">取 消</el-button>
+          <el-button icon="el-icon-circle-check" type="primary" @click="adddialog = false,addtree1()">确 定</el-button>
         </span>
       </el-dialog>
       <el-dialog
@@ -166,9 +161,6 @@
             label-width="80px"
             :model="Modifyfrom"
           >
-            <el-form-item label="ID">
-              <el-input v-model="Modifyfrom.ID"></el-input>
-            </el-form-item>
             <el-form-item label="序号">
               <el-input v-model="Modifyfrom.orderIndex"></el-input>
             </el-form-item>
@@ -182,9 +174,9 @@
               <el-input v-model="Modifyfrom.remark"></el-input>
             </el-form-item>
           </el-form>
-          <el-button @click="Modifydialog = false">取 消</el-button>
-          <el-button type="primary" @click="Modifydialog = false,modifytree1()"
-            >确 定</el-button
+          <el-button plain icon="el-icon-circle-close" @click="Modifydialog = false">取 消</el-button>
+          <el-button icon="el-icon-circle-check" type="primary" @click="Modifydialog = false,modifytree1()"
+           plain >确 定</el-button
           >
         </span>
       </el-dialog>
@@ -203,9 +195,6 @@
           <el-form-item label="名称">
               <el-input v-model="addfrom2.Caption"></el-input>
             </el-form-item>
-            <el-form-item label="ID">
-              <el-input v-model="addfrom2.ID"></el-input>
-            </el-form-item>
             <el-form-item label="序号">
               <el-input v-model="addfrom2.orderIndex"></el-input>
             </el-form-item>
@@ -219,9 +208,9 @@
               <el-input v-model="addfrom2.remark"></el-input>
             </el-form-item>
           </el-form>
-          <el-button @click="adddialog2 = false">取 消</el-button>
-          <el-button type="primary" @click="adddialog2 = false ,addzijiedian()"
-            >确 定</el-button
+          <el-button plain icon="el-icon-circle-close" @click="adddialog2 = false">取 消</el-button>
+          <el-button icon="el-icon-circle-check" type="primary" @click="adddialog2 = false ,addzijiedian()"
+            plain>确 定</el-button
           >
         </span>
       </el-dialog>
@@ -237,9 +226,6 @@
             label-width="80px"
             :model="Modifyfrom2"
           >
-            <el-form-item label="ID">
-              <el-input v-model="Modifyfrom2.ID"></el-input>
-            </el-form-item>
             <el-form-item label="序号">
               <el-input v-model="Modifyfrom2.orderIndex"></el-input>
             </el-form-item>
@@ -256,141 +242,17 @@
               <el-input v-model="Modifyfrom2.remark"></el-input>
             </el-form-item>
           </el-form>
-          <el-button @click="Modifydialog2 = false">取 消</el-button>
-          <el-button type="primary" @click="Modifydialog2 = false , modifytree2()"
-            >确 定</el-button
-          >
-        </span>
-      </el-dialog>
-      <el-dialog
-      v-dialogDrag
-        title="提示"
-        :visible.sync="maindialog"
-        width="45%"
-        :before-close="handleClose"
-      >
-        <span slot="footer" class="dialog-footer">
-          <el-tabs v-model="activeName" type="card">
-            <el-tab-pane label="主要信息" name="first">
-              <el-form
-                label-width="82px"
-                :model="mainfrom"
-              >
-                <div style="display:flex">
-                  <div class="" style="">
-                  <el-form-item  label="料仓全称">
-                    <el-input class="body_dialog_input" v-model="mainfrom.Caption"></el-input>
-                  </el-form-item>
-                  <el-form-item label="数字编号">
-                    <el-input class="body_dialog_input" v-model="mainfrom.commIDNum"></el-input>
-                  </el-form-item>
-                  <el-form-item label="排序号">
-                    <el-input class="body_dialog_input" v-model="mainfrom.orderIndex"></el-input>
-                  </el-form-item>
-                  <el-form-item label="接口编码">
-                    <el-input class="body_dialog_input" v-model="mainfrom.interfaceID"></el-input>
-                  </el-form-item>
-                  <el-form-item label="备注">
-                    <el-input class="body_dialog_input" v-model="mainfrom.remark"></el-input>
-                  </el-form-item>
-                  <el-form-item label="高位报警值">
-                    <el-input class="body_dialog_input" v-model="mainfrom.alarmHeightMax"></el-input>
-                  </el-form-item>
-                </div>
-                <div
-                  class="body_dialog2"
-                >
-                <span>原料名称</span>
-                  <el-select v-model="materialName" filterable placeholder="请选择">
-                    <el-option
-                      v-for="item in options2"
-                      :key="item.value"
-                      :label="item.Caption"
-                      :value="item.ID">
-                    </el-option>
-                  </el-select>
-                  <el-form-item style="margin-top:7%" label="最大容重">
-                    <el-input class="body_dialog_input"  v-model="mainfrom.storeWeightMax"></el-input>
-                  </el-form-item>
-                  <el-form-item label="料仓体积">
-                    <el-input class="body_dialog_input" v-model="mainfrom.storeVolumeMax"></el-input>
-                  </el-form-item>
-                  <el-form-item label="库存单位">
-                    <el-select v-model="storeWeightUnit" filterable placeholder="请选择">
-                    <el-option
-                      v-for="item in options3"
-                      :key="item.value"
-                      :label="item.label"
-                      :value="item.value">
-                    </el-option>
-                  </el-select>
-                  </el-form-item>
-                  <el-form-item label="库存精确位">
-                    <el-input class="body_dialog_input" v-model="mainfrom.storeWeightPointNum"></el-input>
-                  </el-form-item>
-                  <el-form-item label="低位报警值">
-                    <el-input class="body_dialog_input" v-model="mainfrom.alarmHeightMin"></el-input>
-                  </el-form-item>
-                </div>
-                </div>
-              </el-form>
-            </el-tab-pane>
-            <el-tab-pane label="雷达参数" name="second">
-              <el-form
-                label-width="82px"
-                :model="Radarfrom"
-              >
-                <div style="display:flex">
-                    <div class="" style="">
-                  <el-form-item label="料仓直径">
-                    <el-input  class="body_dialog_input" v-model="Radarfrom.storeZJ"></el-input>
-                  </el-form-item>
-                  <el-form-item label="圆柱高度">
-                    <el-input class="body_dialog_input" v-model="Radarfrom.heightTop"></el-input>
-                  </el-form-item>
-                  <el-form-item label="椎体高度">
-                    <el-input class="body_dialog_input" v-model="Radarfrom.heightBottom"></el-input>
-                  </el-form-item>
-                  <el-form-item label="雷达线长">
-                    <el-input class="body_dialog_input" v-model="Radarfrom.radarLineLength"></el-input>
-                  </el-form-item>
-                  <el-form-item label="雷达盲区">
-                    <el-input class="body_dialog_input" v-model="Radarfrom.radarDeadzone"></el-input>
-                  </el-form-item>
-                </div>
-                <div
-                  class="body_dialog2"
-                >
-                  <el-form-item label="高位报警">
-                    <el-input  class="body_dialog_input" v-model="Radarfrom.alarmHeightMax"></el-input>
-                  </el-form-item>
-                  <el-form-item label="低位报警">
-                    <el-input class="body_dialog_input" v-model="Radarfrom.alarmHeightMin"></el-input>
-                  </el-form-item>
-                  <el-form-item style="margin-left:-6.7%" label-width="100px" label="雷达高位参数">
-                    <el-input class="body_dialog_input" v-model="Radarfrom.stateFlagAlarmMax"></el-input>
-                  </el-form-item>
-                  <el-form-item  style="margin-left:-6.7%" label-width="100px" label="雷达低位参数">
-                    <el-input class="body_dialog_input" v-model="Radarfrom.stateFlagAlarmMin"></el-input>
-                  </el-form-item>
-                  <el-form-item label="通讯地址">
-                    <el-input class="body_dialog_input" v-model="Radarfrom.commIDAddress"></el-input>
-                  </el-form-item>
-                </div>
-                </div>
-              </el-form>
-            </el-tab-pane>
-          </el-tabs>
-          <el-button style="margin-top: 5%" @click="maindialog = false,addfalse()"
-            >取 消</el-button
-          >
-          <el-button type="primary" @click="maindialog = false,add()"
-            >确 定</el-button
+          <el-button plain icon="el-icon-circle-close" @click="Modifydialog2 = false">取 消</el-button>
+          <el-button icon="el-icon-circle-check" type="primary" @click="Modifydialog2 = false , modifytree2()"
+            plain>确 定</el-button
           >
         </span>
       </el-dialog>
     </div>
-
+      <div>
+        <Dialog ref="dialog">
+          </Dialog>
+      </div>
     <!-- <span>料仓信息</span> -->
     <div class="table">
       <Lcxx ref="liaocangxinxi"> </Lcxx>
@@ -401,8 +263,9 @@
 import {addlcxx , querylistlcxx , querylistylxx} from '@/api/user.js'
 import {querylisttree , addtree1 , addtree2 , modifytree1 , modifytree2 ,deletetree1 , deletetree2} from '@/api/tree.js'
 import Lcxx from "@/components/table/liaocangxinxi.vue";
+import Dialog from '@/views/tree/tree2/dialog.vue'
 export default {
-  components: { Lcxx },
+  components: { Lcxx , Dialog },
   //   components: {  },
   data() {
     return {
@@ -470,7 +333,7 @@ export default {
         caption:'',
         typeMaterialID:''
       },
-      adddialog2: false,
+      adddialog2: false,  
       Modifydialog2: false,
       dialogVisible: false,
       increasefrom: {
@@ -735,49 +598,18 @@ export default {
       }
     },
     add() {
-      const aa = this.$refs.liaocangxinxi
-      // alert("增加方法还在实现");
-      addlcxx({
-        Caption : this.mainfrom.Caption,
-        CommIDNum : this.mainfrom.commIDNum,
-        OrderIndex : this.mainfrom.orderIndex,
-        InterfaceID : this.mainfrom.interfaceID,
-        Remark : this.mainfrom.remark,
-        AlarmHeightMax : this.mainfrom.alarmHeightMax,
-        MaterialID : this.materialName,
-        StoreWeightMax : this.mainfrom.storeWeightMax,
-        StoreVolumeMax : this.mainfrom.storeVolumeMax,
-        StoreWeightPointNum : this.mainfrom.storeWeightPointNum,
-        AlarmHeightMin : this.mainfrom.alarmHeightMin,
-        StoreZJ : this.Radarfrom.storeZJ,
-        HeightTop : this.Radarfrom.heightTop,
-        HeightBottom : this.Radarfrom.heightBottom,
-        RadarLineLength : this.Radarfrom.radarLineLength,
-        RadarDeadzone : this.Radarfrom.radarDeadzone,
-        AlarmHeightMax : this.Radarfrom.alarmHeightMax,
-        AlarmHeightMin : this.Radarfrom.alarmHeightMin,
-        // StateFlagAlarmMax : this.Radarfrom.stateFlagAlarmMax,
-        // StateFlagAlarmMin : this.Radarfrom.stateFlagAlarmMin,
-        CommIDAddress : this.Radarfrom.commIDAddress,
-        CompanyID : localStorage.getItem('comid'),
-        StoreWeightUnit : this.storeWeightUnit,
-        TypeMaterialID : this.value
-      }).then((response) => {
-                this.$message({
-                  message: "添加成功！",
-                  type: "success",
-                });
-                this.querylist();
-                this.addfalse()
-                // const gonsixinxi=this.$refs.gonsixinxi
-                // gonsixinxi.querylist()
-              })
-              .catch((error) => {
-                this.$message({
-                  message: "添加未成功，请联系管理员",
-                  type: "error",
-                });
-              });
+      if(this.value===""){
+        this.$message({
+          type:'info',
+          message:'请先选择类型'
+        })
+      }else{
+        const aa = this.$refs.liaocangxinxi
+        const add = this.$refs.dialog
+        localStorage.setItem('TypeMaterialID' , this.value)
+        add.addmaindialog()
+      }
+      
     },
     get() {
       alert("获取方法还未实现，敬请期待");
@@ -822,14 +654,14 @@ export default {
          page: this.page,
          intPageSize: this.size,
          Comid:localStorage.getItem('comid'),
-         TypeMaterialID:localStorage.getItem('comid')
       }).then((response)=>{
         this.options2 = response.data.data
-        console.log(response.data.data)
       })
     },
     querylist(){
       const aa = this.$refs.liaocangxinxi
+      aa.loading = true
+      localStorage.setItem('Typematerialid' , this.value)
       querylistlcxx({
         Typematerialid : this.value,
         page: aa.page,

@@ -70,7 +70,7 @@
         </el-table-column>
         <el-table-column prop="Caption" label="名称" width="">
         </el-table-column>
-        <el-table-column prop="TypeMaterialID" label="类型" width="">
+        <el-table-column prop="Caption" label="类型" width="">
         </el-table-column>
         <el-table-column prop="Density" label="密度" width="">
         </el-table-column>

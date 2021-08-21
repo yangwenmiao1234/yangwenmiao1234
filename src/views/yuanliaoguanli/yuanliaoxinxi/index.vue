@@ -6,14 +6,14 @@
         <el-option
           v-for="item in options3"
           :key="item.value"
-          :label="item.label"
+          :label="item.title"
           :value="item.value"
         >
         </el-option>
       </el-select>
       <el-button  style="" @click="addtype()" type="primary" plain>...</el-button>
       <el-button class="body_button_1" size="small" style="" @click="adddialog=true,querylisttree()" type="primary" plain>增加</el-button>
-      <el-button class="body_button_2" size="small" style="" @click="query()" type="primary" plain>刷新</el-button>
+      <el-button class="body_button_2" size="small" style="" @click="query1()" type="primary" plain>刷新</el-button>
         </div>
         <div class="table" style="">
             <Table ref="table">
@@ -79,7 +79,7 @@
 <script>
 import Table from '@/views/yuanliaoguanli/yuanliaoxinxi/table.vue'
 import Dialog from '@/views/yuanliaoguanli/yuanliaoxinxi/dialog.vue'
-import { querylistylxx , addylxx , deletesylxx , modifyylxx } from '@/api/user.js'
+import { querylistylxx , addylxx , deletesylxx , modifyylxx , querylistlcxx} from '@/api/user.js'
 import { querylisttree , querylisttree2 } from '@/api/tree.js'
   export default {
       components :{ Table , Dialog},
@@ -109,23 +109,26 @@ import { querylisttree , querylisttree2 } from '@/api/tree.js'
         TypeMaterialItemID: '',
         options3: [
         {
-          value: "HGMES",
-          label: "一号线",
-        },
-        {
-          value: "HGMES2",
-          label: "二号线",
-        },
-        {
-          value: "HGMES3",
-          label: "三号线",
-        },
+           value: '',
+          title:'',
+          label:''
+        }
       ],
       value3: "",
       arr : [],
       };
     },
     methods:{
+      shuxingjiego() {
+        querylisttree({
+        Comid:localStorage.getItem('comid')
+        }).then(response=>{
+         this.data=response.data
+         this.options3=response.data
+        }).catch((error)=>{
+          alert('获取失败')
+        })
+    },
       addtype(){
         const aa = this.$refs.dialog
         aa.dialogVisible = true
@@ -135,6 +138,7 @@ import { querylisttree , querylisttree2 } from '@/api/tree.js'
         },
         query1(){
           const bb = this.$refs.table
+          alert(this.value3)
            querylistylxx({
             page: bb.page,
             intPageSize: bb.size,
@@ -158,10 +162,6 @@ import { querylisttree , querylisttree2 } from '@/api/tree.js'
             message: "查询失败，请联系管理员！",
           });
         });
-        },
-        query(){
-          const aa = this.$refs.table
-          aa.querylist()
         },
       add() {
       const ss = this.$refs.table;
@@ -211,7 +211,7 @@ import { querylisttree , querylisttree2 } from '@/api/tree.js'
       }
     },
     mounted(){
-      
+      this.shuxingjiego()
     }
   };
 </script>

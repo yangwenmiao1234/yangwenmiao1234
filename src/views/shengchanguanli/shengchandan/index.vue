@@ -86,10 +86,8 @@
        v-dialogDrag
       title="编辑"
       :visible.sync="leijidialog"
-      :before-close="handleClose"
     >
       <el-form
-        :label-position="editorlabel"
         label-width="80px"
         :model="leijiform"
       >

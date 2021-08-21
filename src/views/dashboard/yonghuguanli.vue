@@ -1,251 +1,241 @@
 <template>
   <div class="body">
-    <el-button @click="querymenu()">
-    </el-button>
-    <el-steps direction="vertical" :active="active" finish-status="success">
-      <el-step
-        title="新建用户"
-        description="新建用户，添加用户基本信息。"
-      ></el-step>
+    <el-drawer
+      title="分配菜单"
+      :visible.sync="drawer"
+      :direction="direction"
+      :before-close="handleClose">
+      <el-tree
+      show-checkbox=""
+      style="margin-top: 3%"
+      :data="datatree"
+      default-expand-all
+      node-key="id"
+      ref="tree"
+    >
+    </el-tree>
+    <el-form style="margin-top:10%;margin-left:10%" ref="form" :model="form" label-width="80px">
+      <el-form-item>
+        <el-button type="primary" @click="drawer=false,savemenu()" plain>保存菜单</el-button>
+        <el-button type="primary" @click="drawer=false" plain>取消</el-button>
+      </el-form-item>
+    </el-form>
+    </el-drawer>
+    <el-dialog
+      :title="title"
+      :visible.sync="adduserdialog"
+      width="30%">
+        <div class="dialog">
+            <el-form ref="form" :rules="formRules" :model="addform" label-width="80px">
+              <el-form-item label="用户名称：" prop="name" :rules="[{required: true, trigger: 'blur', message: '请输入用户名'}]">
+                <el-input v-model="addform.name"></el-input>
+              </el-form-item>
+              <el-form-item label="密码：" prop="pass" :rules="[{required: true, trigger: 'blur', message: '请输入密码'}]">
+                <el-input v-model="addform.pass"></el-input>
+              </el-form-item>
+              <el-form-item prop="region" label="部门：" :rules="[{required: true, trigger: 'blur', message: '请选择部门'}]">
+                <el-select v-model="region" placeholder="请选择活动区域">
+                  <el-option
+                    v-for="item in options2"
+                    :key="item.value"
+                    :label="item.label"
+                    :value="item.value">
+                  </el-option>
+                </el-select>
+              </el-form-item>
+              <el-form-item label="创建时间：">
+                  <el-date-picker
+                    v-model="time"
+                    type="datetime"
+                    placeholder="选择日期时间"
+                    default-time="12:00:00">
+                  </el-date-picker>
+              </el-form-item>
+              <el-form-item label="性别：">
+              <el-radio v-model="radio" label="1">男</el-radio>
+              <el-radio v-model="radio" label="2">女</el-radio>
+              </el-form-item>
+              <el-form-item label="备注：">
+                <el-input v-model="addform.remark"></el-input>
+              </el-form-item>
+              <el-form-item label="菜单权限：" :rules="[{required: true, trigger: 'blur', message: '请选择部门'}]">
+                <el-button @click="drawer = true , querymenu()" type="primary">
+                  点击分配
+                </el-button>
+              </el-form-item>
+              <el-form-item>
+                <el-button @click="adduserdialog=false , dialog()"  type="primary">{{button}}</el-button>
+                <el-button @click="adduserdialog=false">取消</el-button>
+              </el-form-item>
+            </el-form>
+        </div>
+        </el-dialog>
       <div class="body-1">
-        <el-form :inline="true" :rules="formRules" :model="addform" class="demo-form-inline">
-          <el-form-item prop="name" label="用户名:" :rules="[{required: true, trigger: 'blur', message: '用户名不能为空'}]" >
+        <el-form :inline="true" :model="form" class="demo-form-inline">
+          <el-form-item prop="name" label="用户名:" >
             <el-input
-              v-model="addform.name"
+              v-model="form.name"
               placeholder="请输入用户名"
-              v-on:input="input"
             ></el-input>
           </el-form-item>
-          <el-form-item prop="pass" label="密码:" :rules="[{required: true, trigger: 'blur', message: '密码不能为空'},{ min: 6, message: '长度不得小于六位', trigger: 'blur' }]">
-            <el-input v-on:input="input" v-model="addform.pass" placeholder="请输入密码"></el-input>
-          </el-form-item>
-          <el-form-item prop="region" label="部门:" :rules="[{required: true, trigger: 'blur', message: '请选择部门'}]">
-            <el-select @change="input" v-model="addform.region" placeholder="请选择部门">
-              <el-option label="财务部" value="caiwu"></el-option>
-              <el-option label="技术部" value="jishu"></el-option>
+          <el-form-item prop="department" label="部门:">
+            <el-select v-model="department" clearable placeholder="请选择部门">
+                <el-option
+                  v-for="item in options"
+                  :key="item.value"
+                  :label="item.label"
+                  :value="item.value">
+                </el-option>
             </el-select>
           </el-form-item>
-          <el-form-item label="备注:">
-            <el-input
-              v-model="addform.note"
-              placeholder="请输入备注"
-            ></el-input>
+          <el-form-item label="">
+            <!-- :disabled="jinyong==-1"  jinyong:'-1', 当值为-1时候 按钮禁用 -->
+            <el-button  icon="el-icon-search" type="primary" @click="querylist()" plain>查询</el-button>
+          <el-button icon="el-icon-circle-plus-outline" type="primary" @click="adddialog()" plain>增加</el-button>
           </el-form-item>
         </el-form>
       </div>
-      <el-step
-        title="分配菜单"
-        description="给新建用户分配菜单，比如某某菜单。"
-      >
-      </el-step>
-      <div class="body-2">
-        <div class="body-2-tree">
-          <el-tree
-            :data="data"
-            show-checkbox
-            node-key="id"
-            :default-expanded-keys="[0]"
-            :default-checked-keys="[0]"
-            :props="defaultProps"
-          >
-          </el-tree>
-        </div>
-        <div class="body-2-tree">
-          <el-tree
-            :data="data2"
-            show-checkbox
-            node-key="id"
-            :default-expanded-keys="[0]"
-            :default-checked-keys="[0]"
-            :props="defaultProps2"
-          >
-          </el-tree>
-        </div>
-        <div class="body-2-tree">
-          <el-tree
-            :data="data3"
-            show-checkbox
-            node-key="id"
-            :default-expanded-keys="[0]"
-            :default-checked-keys="[0]"
-            :props="defaultProps3"
-          >
-          </el-tree>
-        </div>
-        <div class="body-2-tree">
-          <el-tree
-            :data="data4"
-            show-checkbox
-            node-key="id"
-            :default-expanded-keys="[0]"
-            :default-checked-keys="[0]"
-            :props="defaultProps4"
-          >
-          </el-tree>
-        </div>
-        <div class="body-2-tree">
-          <el-tree
-            :data="data5"
-            show-checkbox
-            node-key="id"
-            :default-expanded-keys="[0]"
-            :default-checked-keys="[0]"
-            :props="defaultProps5"
-          >
-          </el-tree>
-        </div>
-        <div class="body-2-tree">
-          <el-tree
-            :data="data6"
-            show-checkbox
-            node-key="id"
-            :default-expanded-keys="[0]"
-            :default-checked-keys="[0]"
-            :props="defaultProps6"
-          >
-          </el-tree>
-        </div>
-        <div class="body-2-tree">
-          <el-tree
-            :data="data7"
-            show-checkbox
-            node-key="id"
-            :default-expanded-keys="[0]"
-            :default-checked-keys="[0]"
-            :props="defaultProps7"
-          >
-          </el-tree>
-        </div>
-        <div class="body-2-tree">
-          <el-tree
-            :data="data8"
-            show-checkbox
-            node-key="id"
-            :default-expanded-keys="[0]"
-            :default-checked-keys="[0]"
-            :props="defaultProps8"
-          >
-          </el-tree>
-        </div>
-        <div class="body-2-tree">
-          <el-tree
-            :data="data9"
-            show-checkbox
-            node-key="id"
-            :default-expanded-keys="[0]"
-            :default-checked-keys="[0]"
-            :props="defaultProps9"
-          >
-          </el-tree>
-        </div>
-        <div class="body-3">
-        <el-button
-            size="small"
-            type="primary"
-            @click="ok3"
-            plain
-            >确定</el-button
-          >
-        </div>
-      </div>
-      <el-step title="完成" description="创建用户成功，登录即可使用。">
-      </el-step>  
-    </el-steps>
-    <div style="margin-top:3%">
+    <div class="table" style="margin-top:3%">
       <el-table
-      :cell-style="rowClass"
-    :data="tableData"
-    border
-    style="width: 100%">
+      :header-cell-style="{  background: 'rgba(249, 182, 3, 0.67)', color: '#606266' }"
+      v-loading="loading"
+      :cell-style="cellStyle"
+      :row-class-name="tableRowClassName"
+      :data="tableData"
+      border
+      style="width: 100%">
+    <el-table-column fixed="left" label="编号" width="70px">
+        <template slot-scope="scope">
+          {{ scope.$index + 1 }}
+        </template>
+      </el-table-column>
     <el-table-column
-      prop="date"
-      label="创建日期"
-      width="180">
+      prop="DateComeInCompany"
+      label="创建日期">
     </el-table-column>
     <el-table-column
-      prop="name"
-      label="用户名"
-      width="180">
+      prop="UserName"
+      label="用户名">
     </el-table-column>
     <el-table-column
-      prop="name"
+      prop="Sex"
+      label="性别">
+    </el-table-column>
+    <el-table-column
+      prop="UserID"
       label="ID"
       width="180">
     </el-table-column>
     <el-table-column
-      prop="name"
-      label="部门"
-      width="180">
+      prop="DepartmentID"
+      label="部门">
     </el-table-column>
     <el-table-column
-      prop="name"
-      label="拥有菜单"
-      width="180">
-    </el-table-column>
-    <el-table-column
-      prop="name"
-      label="姓名"
-      width="180">
-    </el-table-column>
-    <el-table-column
-      prop="address"
+      prop="Remark"
       label="备注">
     </el-table-column>
+    <el-table-column fixed="right" label="操作" width="150px">
+          <template slot-scope="scope">
+            <el-button
+            icon="el-icon-edit"
+              type="text"
+              size="small"
+              @click="editorClick(scope.row)"
+              >编辑</el-button
+            >
+            <el-button
+            icon="el-icon-delete"
+              type="text"
+              size="small"
+              @click="deletes(scope.row)"
+              >删除</el-button
+            >
+          </template>
+        </el-table-column>
   </el-table>
+   <div class="block">
+      <el-pagination
+        @size-change="handleSizeChange"
+        @current-change="handleCurrentChange"
+        :page-sizes="[10, 20]"
+        :page-size="size"
+        layout="total, sizes, prev, pager, next, jumper"
+        :total="total"
+      >
+      </el-pagination>
     </div>
   </div>
+</div>
 </template>
 <script>
 import { querymenu } from '@/api/menu.js'
+import { queryuser, adduser, modifyuser, deleteuser } from '@/api/usercontrol.js'
+import { validUsername } from '@/utils/validate';
 export default {
   data() {
     return {
+      title:'',
+      pickerOptions: {
+          shortcuts: [{
+            text: '今天',
+            onClick(picker) {
+              picker.$emit('pick', new Date());
+            }
+          }, {
+            text: '昨天',
+            onClick(picker) {
+              const date = new Date();
+              date.setTime(date.getTime() - 3600 * 1000 * 24);
+              picker.$emit('pick', date);
+            }
+          }, {
+            text: '一周前',
+            onClick(picker) {
+              const date = new Date();
+              date.setTime(date.getTime() - 3600 * 1000 * 24 * 7);
+              picker.$emit('pick', date);
+            }
+          }]
+        },
+      time: '',
+      drawer: false,
+      direction: 'rtl',
+      adduserdialog: false,
       formRules:{
         // name:[{required: true, trigger: 'blur', message: '用户名不能为空'}]
       },
       router:[],
       name:'example',
       active: 0,
-      addform: {
-        name: "",
-        pass: "",
-        com: "",
-        region: "",
-        note: "",
-      },
-      tableData: [{
-          date: '2016-05-02',
-          name: '王小虎',
-          address: '上海市普陀区金沙江路 1518 弄'
-        }, {
-          date: '2016-05-04',
-          name: '王小虎',
-          address: '上海市普陀区金沙江路 1517 弄'
-        }, {
-          date: '2016-05-01',
-          name: '王小虎',
-          address: '上海市普陀区金沙江路 1519 弄'
-        }, {
-          date: '2016-05-03',
-          name: '王小虎',
-          address: '上海市普陀区金沙江路 1516 弄'
-        }],
-      data: [
+      form: [
         {
-          id: 1,
-          label: "系统设置",
+        name: "",
+        department: "",
+      }
+      ],
+      loading: false,
+      total: 0,
+      size: 10,
+      page: 1,
+      tableData: [{
+          
+        },],
+      addform: {
+            name: '',
+            region: '',
+            pass: '',
+            remark: '',
+          },
+        datatree: [
+        {
+          value: "",
+          title: "",
+          label: "",
           children: [
             {
-              id: 1.1,
-              label: "公司信息",
-            },
-            {
-              id: 1.2,
-              label: "砼生产线",
-            },
-            {
-              id: 1.3,
-              label: "配置信息",
+              value: "",
+              title: "",
+              label: "",
             },
           ],
         },
@@ -254,271 +244,237 @@ export default {
         children: "children",
         label: "label",
       },
-      data2: [
-        {
-          id: 1,
-          label: "综合管理",
-          children: [
-            {
-              id: 1.1,
-              label: "员工信息",
-            },
-            {
-              id: 1.2,
-              label: "权限管理",
-            }
-          ],
-        },
-      ],
-      defaultProps2: {
-        children: "children",
-        label: "label",
-      },
-      data3: [
-        {
-          id: 1,
-          label: "销售单管理",
-        //   children: [
-        //     {
-        //       id: 1.1,
-        //       label: "公司信息",
-        //     },
-        //     {
-        //       id: 1.2,
-        //       label: "砼生产线",
-        //     },
-        //     {
-        //       id: 1.3,
-        //       label: "配置信息",
-        //     },
-        //   ],
-        },
-      ],
-      defaultProps3: {
-        children: "children",
-        label: "label",
-      },
-      data4: [
-        {
-          id: 1,
-          label: "生产管理",
-          children: [
-            {
-              id: 1.1,
-              label: "搅运车信息",
-            },
-            {
-              id: 1.2,
-              label: "任务单管理",
-            },
-            {
-              id: 1.3,
-              label: "生产单管理",
-            },
-            {
-              id: 1.3,
-              label: "发货单管理",
-            },
-            {
-              id: 1.3,
-              label: "电话录音",
-            },
-          ],
-        },
-      ],
-      defaultProps4: {
-        children: "children",
-        label: "label",
-      },
-      data5: [
-        {
-          id: 1,
-          label: "实验室",
-          children: [
-            {
-              id: 1.1,
-              label: "标准配方库",
-            },
-            {
-              id: 1.2,
-              label: "绑定配方",
-            },
-            {
-              id: 1.3,
-              label: "历史配方",
-            },
-          ],
-        },
-      ],
-      defaultProps5: {
-        children: "children",
-        label: "label",
-      },
-      data6: [
-        {
-          id: 1,
-          label: "原料管理",
-          children: [
-            {
-              id: 1.1,
-              label: "原料信息",
-            },
-            {
-              id: 1.2,
-              label: "供应商信息",
-            },
-            {
-              id: 1.3,
-              label: "料仓原料",
-            },{
-              id: 1.3,
-              label: "盘库管理",
-            },{
-              id: 1.3,
-              label: "原料库存",
-            },
-          ],
-        },
-      ],
-      defaultProps6: {
-        children: "children",
-        label: "label",
-      },
-      data7: [
-        {
-          id: 1,
-          label: "车辆过磅",
-        //   children: [
-        //     {
-        //       id: 1.1,
-        //       label: "公司信息",
-        //     },
-        //     {
-        //       id: 1.2,
-        //       label: "砼生产线",
-        //     },
-        //     {
-        //       id: 1.3,
-        //       label: "配置信息",
-        //     },
-        //   ],
-        },
-      ],
-      defaultProps7: {
-        children: "children",
-        label: "label",
-      },
-      data8: [
-        {
-          id: 1,
-          label: "数据查询",
-          children: [
-            {
-              id: 1.1,
-              label: "生产数据",
-            },
-            {
-              id: 1.2,
-              label: "发货数据",
-            },
-            {
-              id: 1.3,
-              label: "地磅数据",
-            },{
-              id: 1.3,
-              label: "票单扫码",
-            },{
-              id: 1.3,
-              label: "日志数据",
-            },
-          ],
-        },
-      ],
-      defaultProps8: {
-        children: "children",
-        label: "label",
-      },
-      data9: [
-        {
-          id: 1,
-          label: "帮助",
-          children: [
-            {
-              id: 1.1,
-              label: "使用说明",
-            },
-            {
-              id: 1.2,
-              label: "远程协助",
-            },
-            {
-              id: 1.3,
-              label: "关于",
-            },
-          ],
-        },
-      ],
-      defaultProps9: {
-        children: "children",
-        label: "label",
-      },
-    };
+       options: [{
+          value: '选项1',
+          label: '销售部'
+        }, {
+          value: '选项2',
+          label: '技术部'
+        },],
+        department: '',
+        options2: [{
+          value: '选项1',
+          label: '销售部'
+        }, {
+          value: '选项2',
+          label: '技术部'
+        },],
+        region:'',
+      pid:0,
+      arr:[],
+      router:[],
+      radio:'1',
+      button:''
+      };
   },
   methods: {
-    input(){
-      if(this.addform.pass.length>=6){
-        if (this.addform.name!='' && this.addform.pass!='' && this.addform.region!='') {
-                this.active = 1;
-              }else{
-                this.active = 0;
-              }
-       }else{
-         this.active = 0;
-      }
-    },
-    ok3() {
-      if (this.addform.name!='' && this.addform.pass!='' && this.addform.region!='') {
-          this.$confirm('将成功创建用，确定吗？', '提示', {
-          confirmButtonText: '确定',
-          cancelButtonText: '取消',
-          type: 'success'
-        }).then(() => {
-          this.$message({
-            type: 'success',
-            message: '创建成功!'
-          });
-          this.active = 3;
-        }).catch(() => {
-          this.active = 1;
-          this.$message({
-            type: 'info',
-            message: '已取消创建'
-          });          
-        });
-      }else{
-        this.$message({
-            type: 'info',
-            message: '请先填写用户基本信息'
-          });   
-      }
-    },
-      headClass() {
+    // 修改表头样式 字体居中
+    headClass() {
       return "text-align:center";
     },
-    rowClass() {
+    // 修改行内样式 表格字体居中
+    cellStyle() {
       return "text-align:center";
     },
+    // 修改表格颜色 隔行换行
+    tableRowClassName({ row, rowIndex }) {
+        if (rowIndex%2=== 1) {
+            return 'warning-row';
+        } else {
+            return 'success-row';
+        }
+        return '';
+    },
+    handleClose(done){
+      this.$confirm("还未保存，确认关闭？")
+        .then((_) => {
+          done();
+        })
+        .catch((_) => {});
+    },
+    // handleCheckChange() {
+    // @check-change="handleCheckChange" 这是是要求填到上面树形控件里面去的
+    //   // 获取树形结构父节点id
+    //   this.arr = this.$refs.tree.getCurrentNode();
+    // },
+    savemenu(){
+      console.log(this.$refs.tree.getCheckedNodes())
+      this.arr = this.$refs.tree.getCheckedNodes()
+      this.arr.forEach(item=>{
+        this.router.push(item.value)  
+      })
+    },
+    // 查询菜单方法
     querymenu(){
       querymenu({
-        
+        pid : this.pid
+      }).then((response)=>{
+        this.datatree = response.data.children
       })
+    },
+    handleSizeChange(val) {
+      console.log(val);
+      this.size = val;
+      this.querylist();
+    },
+    handleCurrentChange(val) {
+      console.log(`当前页: ${val}`);
+      this.page = val;
+      this.querylist();
+    },
+    // 查询用户表格数据方法
+    querylist() { 
+      this.loading = true;
+      queryuser({
+        page: this.page,
+        intPageSize: this.size,
+        Comid:localStorage.getItem('comid'),
+        username:this.form.name,
+        deptid:this.department
+      })
+        .then((response) => {
+          this.tableData = response.data.data;
+          this.page = response.data.page;
+          this.size = response.data.PageSize;
+          this.total = response.data.dataCount;
+          this.loading = false;
+        })
+        .catch((error) => {
+          this.loading = true;
+          this.$message({
+            type: "info",
+            message: "查询失败，请联系管理员！",
+          });
+        });
+    },
+    // 删除用户
+    deletes(row) {
+      // debugger;
+      this.$confirm("此操作将永久删除该数据, 是否继续?", "提示", {
+        confirmButtonText: "确定",
+        cancelButtonText: "取消",
+        type: "warning",
+      })
+        .then(() => {
+          deleteuser({
+            id: row.UserID,
+          })
+            .then((response) => {
+              // alert("1  ")
+              this.$message({
+                message: "删除成功",
+                type: "success",
+              });
+              this.querylist();
+              // const gonsixinxi=this.$refs.gonsixinxi
+              // gonsixinxi.querylist()
+            })
+            .catch((error) => {
+              this.$message({
+                message: "删除未成功，请联系管理员",
+                type: "error",
+              });
+            });
+        })
+        .catch((error) => {
+          this.$message({
+            type: "info",
+            message: "已取消删除",
+          });
+        });
+    },
+    adddialog(){
+      this.title = "添加用户"
+      this.button = '立即创建'
+      this.adduserdialog = true
+    },
+    dialog(){
+      // 添加用户
+      if(this.title==='添加用户'){
+        let perIdList = this.router
+      if(this.addform.name==""){
+        this.$message('请输入用户名');
+        this.adduserdialog = true
+      }else{
+          if(this.addform.pass===''){
+               this.$message('请输入密码');
+               this.adduserdialog = true
+          }else{
+            if(this.region===''){
+                this.$message('请选择部门');
+                this.adduserdialog = true
+            }else{
+              var routes = this.router
+              if(routes.length===0){
+                   this.$message('请分配菜单，至少大于1个');
+                   this.adduserdialog = true
+              }else{
+                adduser({
+                  perIdList,
+                  companyID: localStorage.getItem('comid'),
+                  departmentID: this.region,
+                  userID: this.addform.name,
+                  userName: this.addform.name,
+                  userPwd: this.addform.pass, 
+                  remark: this.addform.remark
+                }).then(response=>{
+                  this.querylist()
+                  this.$message({
+                    type:'success',
+                    message: '添加成功，登录即可使用'
+                  })
+                }).catch((error)=>{
+                  this.$message({
+                    type:'success',
+                    message: '添加失败'
+                  })
+                })
+              }
+            }
+          }
+      }
+      }else if(this.title==='修改用户'){
+      let perIdList = this.router
+        modifyuser({
+        perIdList,
+        companyID: localStorage.getItem('comid'),
+        departmentID: this.region,
+        userID: this.addform.name,
+        userName: this.addform.name,
+        userPwd: this.addform.pass, 
+        remark: this.addform.remark
+      }).then(response=>{
+        this.querylist()
+        this.$message({
+          type:'success',
+          message: '修改成功，登录即可使用'
+        })
+      }).catch((error)=>{
+        this.$message({
+          type:'success',
+          message: '修改失败'
+        })
+      })    
+    }
+  },
+    editorClick(row){
+      this.title = "修改用户"
+      this.button = '提交修改'
+      this.adduserdialog = true
+      this.region = row.DepartmentID
+      this.addform.name = row.UserID
+      this.addform.name = row.UserName
+      this.addform.pass = row.UserPwd
+      this.addform.remark = row.Remark
+      this.datatree = row.children
     }
   },
   mounted(){
+    this.querylist()
   }
 };
 </script>
-<style scoped>
+<style>
 .body {
   padding: 25px;
   width: 100%;
@@ -544,5 +500,19 @@ export default {
 .body-button2{
     margin-top: -3.5%;
     margin-left: 10%;
+}
+.table{
+  cursor: pointer;
+}
+.el-table .warning-row {
+  background: rgb(243, 241, 231);
+}
+
+.el-table .success-row {
+  background: #ece9db;
+}
+
+.el-table__body tr:hover>td{
+  background-color: #eee4aacb!important;
 }
 </style>

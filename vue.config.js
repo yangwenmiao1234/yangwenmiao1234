@@ -6,7 +6,7 @@ function resolve(dir) {
   return path.join(__dirname, dir)
 }
 
-const name = defaultSettings.title || '惠工智科' // page title
+const name = defaultSettings.title || '智慧商砼' // page title
                 
 // If your port is set to 80,
 // use administrator privileges to execute the command line.
@@ -16,7 +16,7 @@ const name = defaultSettings.title || '惠工智科' // page title
 const port = process.env.port || process.env.npm_config_port || 9528 // dev port
 
 const px2rem = require('postcss-px2rem')
-
+const webpack = require('webpack') // 引入Jquery
 // 配置基本大小
 const postcss = px2rem({
   // 基准大小 baseSize，需要和rem.js中相同
@@ -33,7 +33,8 @@ module.exports = {
           postcss
         ]
       }
-    }
+    },
+
   },
   /**
    * You will need to set publicPath if you plan to deploy your site under a sub path,
@@ -90,7 +91,12 @@ module.exports = {
         include: 'initial'
       }
     ])
-
+    config.plugin('provide').use(webpack.ProvidePlugin, [{
+      $: 'jquery',
+      jquery: 'jquery',
+      jQuery: 'jquery',
+      'window.jQuery': 'jquery'
+    }])
     // when there are many pages, it will cause too many meaningless requests
     config.plugins.delete('prefetch')
 
@@ -152,3 +158,4 @@ module.exports = {
       )
   }
 }
+
